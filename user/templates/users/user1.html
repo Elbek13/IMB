@@ -1,0 +1,442 @@
+{% extends 'u1_base.html' %}
+{% load static %}
+{% block content %}
+
+    <!-- Category Start -->
+    <div class="container-xxl py-5">
+        <div class="container">
+            <div
+                    class="text-center mx-auto mb-5 wow fadeInUp"
+                    data-wow-delay="0.1s"
+                    style="max-width: 600px"
+            >
+                <h1 class="mb-3">Kategoriyalar</h1>
+                <p>
+                </p>
+            </div>
+            <div class="row g-4 mx-auto">
+                <div class="col-lg-1"></div>
+                <div class="col-lg-2 col-sm-6 wow fadeInUp" data-wow-delay="0.1s">
+                    <a
+                            class="cat-item d-block bg-light text-center rounded p-3"
+                            href="{% url 'u1_dissertatsiya_list' %}"
+                    >
+                        <div class="rounded p-3">
+                            <div class="icon mb-3">
+                                <img
+                                        class="img-fluid"
+                                        src="{% static 'user/u_img/icon-apartment.png' %}"
+                                        alt="Icon"
+                                />
+                            </div>
+                            <h6>Dissertatsiyalar</h6>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-lg-2 col-sm-6 wow fadeInUp" data-wow-delay="0.3s">
+                    <a
+                            class="cat-item d-block bg-light text-center rounded p-3"
+                            href="{% url 'u1_monografiya_list' %}"
+                    >
+                        <div class="rounded p-3">
+                            <div class="icon mb-3">
+                                <img
+                                        class="img-fluid"
+                                        src="{% static 'user/u_img/icon-villa.png' %}"
+                                        alt="Icon"
+                                />
+                            </div>
+                            <h6>Monografiyalar</h6>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-lg-2 col-sm-6 wow fadeInUp" data-wow-delay="0.5s">
+                    <a
+                            class="cat-item d-block bg-light text-center rounded p-3"
+                            href="{% url 'u1_risola_list' %}"
+                    >
+                        <div class="rounded p-3">
+                            <div class="icon mb-3">
+                                <img
+                                        class="img-fluid"
+                                        src="{% static 'user/u_img/icon-house.png' %}"
+                                        alt="Icon"
+                                />
+                            </div>
+                            <h6 style="font-size: 14px!important;">Risola va Kitoblar</h6>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-lg-2 col-sm-6 wow fadeInUp" data-wow-delay="0.7s">
+                    <a
+                            class="cat-item d-block bg-light text-center rounded p-3"
+                            href="{% url 'u1_darslik_list' %}"
+                    >
+                        <div class="rounded p-3">
+                            <div class="icon mb-3">
+                                <img
+                                        class="img-fluid"
+                                        src="{% static 'user/u_img/icon-housing.png' %}"
+                                        alt="Icon"
+                                />
+                            </div>
+                            <h6>Darsliklar</h6>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-lg-2 col-sm-6 wow fadeInUp" data-wow-delay="0.9s">
+                    <a
+                            class="cat-item d-block bg-light text-center rounded p-3"
+                            href="{% url 'u1_qollanma_list' %}"
+                    >
+                        <div class="rounded p-3">
+                            <div class="icon mb-3">
+                                <img
+                                        class="img-fluid"
+                                        src="{% static 'user/u_img/icon-building.png' %}"
+                                        alt="Icon"
+                                />
+                            </div>
+                            <h6>Qo'llanmalar</h6>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-lg-1"></div>
+                <div class="col-lg-1"></div>
+                <div class="col-lg-2 col-sm-6 wow fadeInUp" data-wow-delay="0.1s">
+                    <a
+                            class="cat-item d-block bg-light text-center rounded p-3"
+                            href="{% url 'u1_loyiha_list' %}"
+                    >
+                        <div class="rounded p-3">
+                            <div class="icon mb-3">
+                                <img
+                                        class="img-fluid"
+                                        src="{% static 'user/u_img/icon-apartment.png' %}"
+                                        alt="Icon"
+                                />
+                            </div>
+                            <h6>Ilmiy Loyihalar</h6>
+                            {#                            <span>123 Properties</span>#}
+                        </div>
+                    </a>
+                </div>
+                <div class="col-lg-2 col-sm-6 wow fadeInUp" data-wow-delay="0.3s">
+                    <a
+                            class="cat-item d-block bg-light text-center rounded p-3"
+                            href="{% url 'u1_jurnal_list' %}"
+                    >
+                        <div class="rounded p-3">
+                            <div class="icon mb-3">
+                                <img
+                                        class="img-fluid"
+                                        src="{% static 'user/u_img/icon-villa.png' %}"
+                                        alt="Icon"
+                                />
+                            </div>
+                            <h6 style="font-size: 14px!important;">Ilmiy Jurnallar</h6>
+                            {#                            <span>123 Properties</span>#}
+                        </div>
+                    </a>
+                </div>
+                <div class="col-lg-2 col-sm-6 wow fadeInUp" data-wow-delay="0.5s">
+                    <a
+                            class="cat-item d-block bg-light text-center rounded p-3"
+                            href="{% url 'u1_maqola_list' %}"
+                    >
+                        <div class="rounded p-3">
+                            <div class="icon mb-3">
+                                <img
+                                        class="img-fluid"
+                                        src="{% static 'user/u_img/icon-house.png' %}"
+                                        alt="Icon"
+                                />
+                            </div>
+                            <h6 style="font-size: 14px!important;">Ilmiy Maqolalar</h6>
+                            {#                            <span>123 Properties</span>#}
+                        </div>
+                    </a>
+                </div>
+                <div class="col-lg-2 col-sm-6 wow fadeInUp" data-wow-delay="0.7s">
+                    <a
+                            class="cat-item d-block bg-light text-center rounded p-3"
+                            href="{% url 'u1_tajriba_list' %}"
+                    >
+                        <div class="rounded p-3">
+                            <div class="icon mb-3">
+                                <img
+                                        class="img-fluid"
+                                        src="{% static 'user/u_img/icon-housing.png' %}"
+                                        alt="Icon"
+                                />
+                            </div>
+                            <h6 style="font-size: 14px!important;">Xorijiy Tajribalar</h6>
+                            {#                            <span>123 Properties</span>#}
+                        </div>
+                    </a>
+                </div>
+                <div class="col-lg-2 col-sm-6 wow fadeInUp" data-wow-delay="0.9s">
+                    <a
+                            class="cat-item d-block bg-light text-center rounded p-3"
+                            href="{% url 'u1_other_list' %}"
+                    >
+                        <div class="rounded p-3">
+                            <div class="icon mb-3">
+                                <img
+                                        class="img-fluid"
+                                        src="{% static 'user/u_img/icon-building.png' %}"
+                                        alt="Icon"
+                                />
+                            </div>
+                            <h6>Boshqalar</h6>
+                            {#                            <span>123 Properties</span>#}
+                        </div>
+                    </a>
+                </div>
+                <div class="col-lg-1"></div>
+            </div>
+        </div>
+    </div>
+    <hr/>
+    <!-- Category End -->
+
+    <!-- Yangilik List Start -->
+    <div class="container-xxl py-5">
+        <div class="container">
+            <div class="row g-0 gx-5 align-items-end">
+                <div class="col-lg-6">
+                    <div class="text-start mx-auto mb-5 wow slideInLeft" data-wow-delay="0.1s">
+                        <h1 class="mb-3">Yangiliklar</h1>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-content">
+                <div id="tab-1" class="tab-pane fade show p-0 active">
+                    <div class="row g-4">
+                        {% for news in news_items %}
+                            <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                                <div class="news-card">
+                                    <div class="news-img-container">
+                                        {% if news.image %}
+                                            <img class="news-img" src="{{ news.image.url }}" alt="News Image">
+                                        {% else %}
+                                            <img class="news-img" src="{% static 'user/img/books.jpg' %}"
+                                                 alt="Default Image">
+                                        {% endif %}
+                                    </div>
+                                    <div class="news-body">
+                                        <a class="news-title" href="{% url 'news1_detail' news.id %}">{{ news.title }}</a>
+                                        <p class="news-text">{{ news.content|truncatewords:20 }}</p>
+                                    </div>
+                                    <div class="news-footer">
+                                        <small class="text-muted">{{ news.created_at|date:"d M, Y" }}</small>
+                                    </div>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <div class="col-12 text-center">
+                                <p>Yangiliklar mavjud emas.</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Pagination -->
+                    {% if news_items.paginator.num_pages > 1 %}
+                        <div class="col-12 text-center wow fadeInUp mt-4" data-wow-delay="0.1s">
+                            <nav aria-label="Page navigation">
+                                <ul class="pagination justify-content-center">
+                                    {% if news_items.has_previous %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{ news_items.previous_page_number }}"
+                                               aria-label="Previous">
+                                                <span aria-hidden="true">«</span>
+                                            </a>
+                                        </li>
+                                    {% endif %}
+
+                                    {% for num in news_items.paginator.page_range %}
+                                        {% if news_items.number == num %}
+                                            <li class="page-item active"><a class="page-link" href="#">{{ num }}</a>
+                                            </li>
+                                        {% elif num > news_items.number|add:-3 and num < news_items.number|add:3 %}
+                                            <li class="page-item"><a class="page-link"
+                                                                     href="?page={{ num }}">{{ num }}</a></li>
+                                        {% endif %}
+                                    {% endfor %}
+
+                                    {% if news_items.has_next %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{ news_items.next_page_number }}"
+                                               aria-label="Next">
+                                                <span aria-hidden="true">»</span>
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                </ul>
+                            </nav>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Yangilik List End -->
+
+    <style>
+        /* Barcha kartalarni bir xil o‘lchamda qilish */
+        .news-card {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            min-height: 420px; /* Barcha kartalar bir xil bo‘lishi uchun */
+        }
+
+        .news-img-container {
+            height: 200px; /* Rasm bir xil bo‘lishi uchun */
+            overflow: hidden;
+        }
+
+        .news-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .news-body {
+            padding: 15px;
+            flex-grow: 1;
+        }
+
+        .news-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .news-text {
+            font-size: 14px;
+            color: #666;
+            max-height: 60px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .news-footer {
+            padding: 10px 15px;
+            border-top: 1px solid #eee;
+            background: #f8f9fa;
+            text-align: right;
+        }
+
+        /* Pagination stil */
+        .pagination .page-link {
+            color: #9ff699;
+            border-radius: 5px;
+            margin: 0 5px;
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: #9ff699;
+            border-color: #9ff699;
+            color: white;
+        }
+
+        .pagination .page-item.disabled .page-link {
+            color: #6c757d;
+            pointer-events: none;
+        }
+    </style>
+
+    <!-- Yaratuvchilar Start -->
+    <div class="container-xxl py-5">
+        <div class="container">
+            <div
+                    class="text-center mx-auto mb-5 wow fadeInUp"
+                    data-wow-delay="0.1s"
+                    style="max-width: 600px"
+            >
+                <h1 class="mb-3">Loyiha Yaratuvchilari</h1>
+                <p>
+                    <span class="text-primary">
+                    Ushbu Loyiha Milliy armiyamiz salohiyatini yanada oshirish qo'shinlarda harbiy xizmatchilarning
+                        bilim ko'nikmalarini muhtahkamlash va amaliyotda keng joriy qilish maqsadida yaratildi.</span>
+                </p>
+            </div>
+            <div
+                    class="owl-carousel testimonial-carousel wow fadeInUp"
+                    data-wow-delay="0.1s"
+            >
+                <div class="testimonial-item bg-light rounded p-3">
+                    <div class="bg-white border rounded p-4">
+                        <p>
+                            Ushbu Loyiha Milliy armiyamiz salohiyatini yanada oshirish qo'shinlarda harbiy
+                            xizmatchilarning
+                            bilim ko'nikmalarini muhtahkamlash va amaliyotda keng joriy qilish maqsadida yaratildi.
+                        </p>
+                        <div class="d-flex align-items-center">
+                            <img
+                                    class="img-fluid flex-shrink-0 rounded"
+                                    src="{% static 'user/u_img/testimonial-1.jpg' %}"
+                                    style="width: 45px; height: 45px"
+                                    alt='rasm'/>
+                            <div class="ps-3">
+                                <h6 class="fw-bold mb-1">Client Name</h6>
+                                <small>Profession</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-item bg-light rounded p-3">
+                    <div class="bg-white border rounded p-4">
+                        <p>
+                            Ushbu Loyiha Milliy armiyamiz salohiyatini yanada oshirish qo'shinlarda harbiy
+                            xizmatchilarning
+                            bilim ko'nikmalarini muhtahkamlash va amaliyotda keng joriy qilish maqsadida yaratildi.
+                        </p>
+                        <div class="d-flex align-items-center">
+                            <img
+                                    class="img-fluid flex-shrink-0 rounded"
+                                    src="{% static 'user/u_img/testimonial-2.jpg' %}"
+                                    style="width: 45px; height: 45px" alt="rasm"
+                            />
+                            <div class="ps-3">
+                                <h6 class="fw-bold mb-1">Client Name</h6>
+                                <small>Profession</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-item bg-light rounded p-3">
+                    <div class="bg-white border rounded p-4">
+                        <p>
+                            Ushbu Loyiha Milliy armiyamiz salohiyatini yanada oshirish qo'shinlarda harbiy
+                            xizmatchilarning
+                            bilim ko'nikmalarini muhtahkamlash va amaliyotda keng joriy qilish maqsadida yaratildi.
+                        </p>
+                        <div class="d-flex align-items-center">
+                            <img
+                                    class="img-fluid flex-shrink-0 rounded"
+                                    src="{% static 'user/u_img/testimonial-3.jpg' %}"
+                                    style="width: 45px; height: 45px" alt="rasm"
+                            />
+                            <div class="ps-3">
+                                <h6 class="fw-bold mb-1">Client Name</h6>
+                                <small>Profession</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Yaratuvchilar End -->
+
+
+{% endblock %}

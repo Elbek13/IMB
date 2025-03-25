@@ -1,0 +1,267 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Ro‘yxatdan o‘tish</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins">
+    <link rel="shortcut icon" href="{% static 'user/img/books.jpg' %}" type="image/x-icon">
+    <style>
+        html, body {
+            height: 100vh;
+            margin: 0;
+            font-family: "Poppins", sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: url("{% static 'user/img/library.jpeg' %}");
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+
+        .wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            padding: 20px;
+        }
+
+        #formContent {
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.25);
+            padding: 40px;
+            width: 90%;
+            max-width: 450px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+            text-align: center;
+            backdrop-filter: blur(12px);
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 20px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.9);
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+        }
+
+        /* Form styling */
+        form p {
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        label {
+            color: #0589e4; /* Labels in soft blue */
+            font-size: 14px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+            display: block;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+            transition: color 0.3s ease;
+        }
+
+        label:hover {
+            color: #ffffff;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        select {
+            background-color: rgba(255, 255, 255, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #0589e4; /* Typed text in light blue */
+            padding: 12px;
+            text-align: center;
+            font-size: 14px;
+            width: 85%;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 0 auto;
+        }
+
+        input:focus,
+        select:focus {
+            background-color: rgba(255, 255, 255, 0.5);
+            outline: none;
+            box-shadow: 0 0 8px rgba(86, 186, 237, 0.5);
+        }
+
+        input::placeholder {
+            color: #0589e4; /* Placeholder text in light blue */
+            font-style: italic;
+            opacity: 0.8;
+        }
+
+        /* Select styling */
+        select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background: rgba(255, 255, 255, 0.35) url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iOCIgdmlld0JveD0iMCAwIDE2IDgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTEgMUw4IDdNMTUgMSIgc3Ryb2tlPSIjYjNlMGZmIiBzdHJva2Utd2lkdGg9IjIiLz48L3N2Zz4=") no-repeat right 10px center;
+            padding-right: 30px;
+            cursor: pointer;
+        }
+
+        select option {
+            color: black;
+            background: white;
+        }
+
+        /* Submit Button */
+        input[type="submit"] {
+            background-color: rgba(86, 186, 237, 0.8);
+            border: none;
+            color: white;
+            padding: 15px 80px;
+            font-size: 14px;
+            text-transform: uppercase;
+            border-radius: 8px;
+            transition: all 0.3s ease-in-out;
+            cursor: pointer;
+            margin-top: 20px;
+            box-shadow: 0 4px 15px rgba(86, 186, 237, 0.4);
+        }
+
+        input[type="submit"]:hover {
+            background-color: rgba(57, 172, 231, 1);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(57, 172, 231, 0.6);
+        }
+
+        /* Fade Animation */
+        .fadeIn {
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Message Box */
+        .message-box {
+            color: white;
+            background: rgba(255, 0, 0, 0.7);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .success-box {
+            color: white;
+            background: rgba(0, 255, 0, 0.7);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        /* Error Styling */
+        .error {
+            color: #ff9999;
+            font-size: 12px;
+            margin-top: 5px;
+            display: block;
+        }
+
+        /* Login Link */
+        .login-link {
+            text-decoration: none;
+        }
+
+        .login-link h4 {
+            color: #56baed;
+            font-weight: 600;
+            font-size: 14px;
+            transition: color 0.3s ease, transform 0.2s ease;
+            margin-top: 15px;
+        }
+
+        .login-link:hover h4 {
+            color: #ffffff;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+<div class="wrapper fadeIn">
+    <div id="formContent">
+        <h2>Ro‘yxatdan o‘tish</h2>
+
+        <!-- Xabarlar -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="{% if message.tags == 'success' %}success-box{% else %}message-box{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Profil rasmi -->
+        <div style="text-align: center; margin: 10px 0;">
+            <img src="{% static 'user/img/working.png' %}" style="width: 50px; height: 50px;" alt="User Icon"/>
+        </div>
+
+        <!-- Forma -->
+        <form method="post">
+            {% csrf_token %}
+            <p>
+                <label for="{{ form.passport_number.id_for_label }}">Pasport Raqami</label>
+                {{ form.passport_number }}
+                {% if form.passport_number.errors %}
+                    <span class="error">{{ form.passport_number.errors.0 }}</span>
+                {% endif %}
+            </p>
+            <p>
+                <label for="{{ form.username.id_for_label }}">Foydalanuvchi Nomi</label>
+                {{ form.username }}
+                {% if form.username.errors %}
+                    <span class="error">{{ form.username.errors.0 }}</span>
+                {% endif %}
+            </p>
+            <p>
+                <label for="{{ form.password.id_for_label }}">Parol</label>
+                {{ form.password }}
+                {% if form.password.errors %}
+                    <span class="error">{{ form.password.errors.0 }}</span>
+                {% endif %}
+            </p>
+            <p>
+                <label for="{{ form.confirm_password.id_for_label }}">Parolni Tasdiqlash</label>
+                {{ form.confirm_password }}
+                {% if form.confirm_password.errors %}
+                    <span class="error">{{ form.confirm_password.errors.0 }}</span>
+                {% endif %}
+            </p>
+            <p>
+                <label for="{{ form.branch.id_for_label }}">Filial</label>
+                {{ form.branch }}
+                {% if form.branch.errors %}
+                    <span class="error">{{ form.branch.errors.0 }}</span>
+                {% endif %}
+            </p>
+            <input type="submit" value="Ro‘yxatdan o‘tish" autocomplete="off"/>
+            <a href="{% url 'login' %}" class="login-link">
+                <h4>Login</h4>
+            </a>
+        </form>
+    </div>
+</div>
+</body>
+</html>

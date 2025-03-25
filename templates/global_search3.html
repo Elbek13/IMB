@@ -1,0 +1,56 @@
+{% extends 'user3_base.html' %}
+{% load static %}
+{% block content %}
+    <div class="container my-5">
+        <h1>Qidiruv Natijalari</h1>
+        {% if search_query %}
+            <p>"{{ search_query }}" so'ziga mos natijalar:</p>
+        {% else %}
+            <p>Iltimos, qidiruv so'zini kiriting.</p>
+        {% endif %}
+        <hr/>
+
+        {% for category, items in results.items %}
+            {% if items %}
+                <section class="mb-5">
+                    <h2>
+                        {% if category == 'dissertatsiyalar' %}Dissertatsiyalar
+                        {% elif category == 'monografiyalar' %}Monografiyalar
+                        {% elif category == 'risolalar' %}Risolalar
+                        {% elif category == 'darsliklar' %}Darsliklar
+                        {% elif category == 'qollanmalar' %}Qo‘llanmalar
+                        {% elif category == 'loyihalar' %}Loyihalar
+                        {% elif category == 'jurnallar' %}Jurnallar
+                        {% elif category == 'maqolalar' %}Maqolalar
+                        {% elif category == 'otherlar' %}Boshqa Obyektlar
+                        {% elif category == 'tajribalar' %}Xorijiy Tajribalar
+                        {% endif %}
+                    </h2>
+                    <div class="row">
+                        {% for item in items %}
+                            <div class="col-lg-2 col-sm-6 wow fadeInUp" data-wow-delay="0.1s">
+                                <a class="cat-item d-block bg-light text-center rounded p-3"
+                                   href="{% url 'u1_'|add:category|slice:":-3"|add:'_detail' item.id %}">
+                                    <div class="rounded p-3">
+                                        <div class="icon mb-3">
+                                            <img class="img-fluid"
+                                                 src="{% static 'user/u_img/icon-'|add:category|slice:":-3"|add:'.png' %}"
+                                                 alt="{{ category|slice:":-3"|title }} Icon"
+                                                 onError="this.onerror=null; this.src='{% static 'user/u_img/icon-villa.png' %}'"/>
+                                        </div>
+                                        <h6>{{ item.title }}</h6>
+                                        {% if category != 'loyihalar' %}
+                                            <p>{{ item.author }}</p>
+                                        {% endif %}
+                                    </div>
+                                </a>
+                            </div>
+                        {% empty %}
+                            <p>{{ category|slice:":-3"|title }} natijalari topilmadi.</p>
+                        {% endfor %}
+                    </div>
+                </section>
+            {% endif %}
+        {% endfor %}
+    </div>
+{% endblock %}

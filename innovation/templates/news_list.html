@@ -1,0 +1,266 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <!-- Navbar -->
+    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl" id="navbarBlur"
+         data-scroll="false">
+        <div class="container-fluid py-1 px-3 pt-0">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+                    <li class="breadcrumb-item text-sm">
+                        <a class="opacity-5 text-white" href="{% url 'dashboard' %}">Bosh Sahifa</a>
+                    </li>
+                    <li class="breadcrumb-item text-sm text-white active" aria-current="page">Yangiliklar</li>
+                </ol>
+            </nav>
+        </div>
+    </nav>
+    <main class="main-content position-relative border-radius-lg">
+        <div class="container-fluid py-4">
+            <!-- Notification -->
+            {% if success_message %}
+                <div id="successAlert" class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ success_message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <script>
+                    setTimeout(function () {
+                        document.getElementById("successAlert").style.display = "none";
+                    }, 3000);
+                </script>
+            {% endif %}
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card mb-4">
+                        <div class="card-header pb-0 d-flex justify-content-between align-items-center">
+                            <h6>Yangiliklar Ro‘yxati</h6>
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                    data-bs-target="#addNewsModal">
+                                Yangi Yangilik Qo‘shish
+                            </button>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <div class="mx-3">
+                                <label for="limitSelect"></label>
+                                <select id="limitSelect" class="form-select w-150 pe-5 d-inline-block">
+                                    <option value="10" {% if request.GET.limit == "10" %}selected{% endif %}>10</option>
+                                    <option value="20" {% if request.GET.limit == "20" %}selected{% endif %}>20</option>
+                                    <option value="30" {% if request.GET.limit == "30" %}selected{% endif %}>30</option>
+                                </select>
+                            </div>
+                            <div style="width: 200px!important; height: 50px!important;">
+                                <label for="searchInput"></label>
+                                <input type="text" id="searchInput" class="form-control w-85 me-4" autocomplete="off"
+                                       placeholder="Qidirish...">
+                            </div>
+                        </div>
+                        <div class="card-body px-0 pt-0 pb-2">
+                            <div class="table-responsive p-0">
+                                <table class="table align-items-center justify-content-center mb-0">
+                                    <thead>
+                                    <tr>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                            Sarlavha
+                                        </th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                            Yaratilgan vaqti
+                                        </th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder text-center opacity-7 ps-2">
+                                            Tahrirlash
+                                        </th>
+                                        <th></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for news in news_items %}
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex px-2">
+                                                    <div>
+                                                        {% if news.image %}
+                                                            <img src="{{ news.image.url }}"
+                                                                 class="avatar avatar-sm rounded-circle me-2"
+                                                                 alt="{{ news.title }}">
+                                                        {% else %}
+                                                            <img src="{% static 'assets/img/small-logos/logo-jira.svg' %}"
+                                                                 class="avatar avatar-sm rounded-circle me-2"
+                                                                 alt="news">
+                                                        {% endif %}
+                                                    </div>
+                                                    <div class="my-auto">
+                                                        <h6 class="mb-0 text-sm">{{ news.title }}</h6>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <p class="text-sm font-weight-bold mb-0">{{ news.created_at }}</p>
+                                            </td>
+                                            <td class="align-middle text-center">
+                                                <button class="btn btn-warning" data-bs-toggle="modal"
+                                                        data-bs-target="#editNewsModal{{ news.id }}">Tahrirlash
+                                                </button>
+                                                <button class="btn btn-danger" data-bs-toggle="modal"
+                                                        data-bs-target="#deleteNewsModal{{ news.id }}">O‘chirish
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <!-- Tahrirlash Modal -->
+                                        <div class="modal fade" id="editNewsModal{{ news.id }}" tabindex="-1"
+                                             aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title">Yangilikni Tahrirlash</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                                aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form method="POST" action="{% url 'news_edit' news.id %}"
+                                                              enctype="multipart/form-data">
+                                                            {% csrf_token %}
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Sarlavha</label>
+                                                                <input type="text" class="form-control" name="title"
+                                                                       autocomplete="off"
+                                                                       value="{{ news.title }}" required>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Matn</label>
+                                                                <textarea class="form-control" name="content" rows="5"
+                                                                          required>{{ news.content }}</textarea>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label class="form-label">Rasm</label>
+                                                                <input type="file" class="form-control" name="image"
+                                                                       autocomplete="off">
+                                                                {% if news.image %}
+                                                                    <img src="{{ news.image.url }}"
+                                                                         alt="{{ news.title }}" class="mt-2"
+                                                                         style="max-width: 100px;">
+                                                                {% endif %}
+                                                            </div>
+                                                            <button type="submit" class="btn btn-success">Saqlash
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- O‘chirish Modal -->
+                                        <div class="modal fade" id="deleteNewsModal{{ news.id }}" tabindex="-1"
+                                             aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title">Yangilikni O‘chirish</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                                aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <p>Haqiqatan ham "{{ news.title }}" yangiligini
+                                                            o‘chirmoqchimisiz?</p>
+                                                        <form method="POST" action="{% url 'news_delete' news.id %}">
+                                                            {% csrf_token %}
+                                                            <button type="submit" class="btn btn-danger">O‘chirish
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% empty %}
+                                        <tr>
+                                            <td colspan="4" class="text-center text-muted">Hozircha yangiliklar mavjud
+                                                emas
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-center">
+                            <nav aria-label="Page navigation example">
+                                <ul class="pagination justify-content-center">
+                                    <li class="page-item {% if not news_items.has_previous %}disabled{% endif %}">
+                                        <a class="page-link"
+                                           href="{% if news_items.has_previous %}?page={{ news_items.previous_page_number }}&limit=
+                                               {{ request.GET.limit }}{% else %}#{% endif %}">
+                                            <i class="fas fa-chevron-left"></i>
+                                        </a>
+                                    </li>
+                                    {% for num in news_items.paginator.page_range %}
+                                        <li class="page-item {% if news_items.number == num %}active{% endif %}">
+                                            <a class="page-link text-primary font-weight-bold"
+                                               href="?page={{ num }}&limit={{ request.GET.limit }}">{{ num }}</a>
+                                        </li>
+                                    {% endfor %}
+                                    <li class="page-item {% if not news_items.has_next %}disabled{% endif %}">
+                                        <a class="page-link"
+                                           href="{% if news_items.has_next %}?page={{ news_items.next_page_number }}&limit=
+                                               {{ request.GET.limit }}{% else %}#{% endif %}">
+                                            <i class="fas fa-chevron-right"></i>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Yangilik qo'shish uchun Modal -->
+    <div class="modal fade" id="addNewsModal" tabindex="-1" aria-labelledby="addNewsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addNewsModalLabel">Yangi Yangilik Qo‘shish</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="{% url 'news_create' %}" enctype="multipart/form-data" id="newsForm">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <button type="submit" class="btn btn-success">Qo‘shish</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Qidiruv funksiyasi
+        document.getElementById('searchInput').addEventListener('keyup', function () {
+            let searchText = this.value.toLowerCase();
+            let rows = document.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                let newsTitleElement = row.querySelector('.my-auto h6');
+                if (newsTitleElement) {
+                    let newsTitle = newsTitleElement.textContent.toLowerCase();
+                    row.style.display = newsTitle.includes(searchText) ? '' : 'none';
+                }
+            });
+        });
+
+        // Limitni o'zgartirishda sahifani yangilash
+        document.getElementById('limitSelect').addEventListener('change', function () {
+            let selectedLimit = this.value;
+            let url = new URL(window.location.href);
+            url.searchParams.set('limit', selectedLimit);
+            url.searchParams.set('page', 1);
+            window.location.href = url.toString();
+        });
+
+        // Sarlavha takrorlanishini tekshirish
+        document.addEventListener("DOMContentLoaded", function () {
+            const newsInput = document.getElementById("newsTitle");
+            const existingNews = [{% for news in news_items %}"{{ news.title|escapejs }}",{% endfor %}];
+            newsInput.addEventListener("input", function () {
+                newsInput.classList.toggle("is-invalid", existingNews.includes(newsInput.value.trim()));
+            });
+        });
+    </script>
+{% endblock %}

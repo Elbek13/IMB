@@ -1,0 +1,186 @@
+{% extends 'user2_base.html' %}
+{% load static %}
+{% block content %}
+    <!-- Yangilik List Start -->
+    <div class="container-xxl py-5">
+        <div class="container">
+            <div class="row g-0 gx-5 align-items-end mb-4">
+                <div class="col-lg-6">
+                    <div class="text-start mx-auto wow slideInLeft" data-wow-delay="0.1s">
+                        <h1 class="mb-3">Yangiliklar</h1>
+                        <p class="text-muted">Jami yangiliklar: {{ total_news }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-content">
+                <div id="tab-1" class="tab-pane fade show p-0 active">
+                    <div class="row g-4">
+                        {% for news in news_items %}
+                            <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                                <div class="news-card">
+                                    <div class="news-img-container position-relative">
+                                        {% if news.image %}
+                                            <img class="news-img" src="{{ news.image.url }}" alt="News Image">
+                                        {% elif news.video %}
+                                            <video class="news-img" muted>
+                                                <source src="{{ news.video.url }}" type="video/mp4">
+                                            </video>
+                                            <div class="play-icon"><i class="fas fa-play"></i></div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="news-body">
+                                        <a class="news-title"
+                                           href="{% url 'news2_detail' news.id %}">{{ news.title }}</a>
+                                        <p class="news-text">{{ news.content|truncatewords:20 }}</p>
+                                    </div>
+                                    <div class="news-footer">
+                                        <small class="text-muted">{{ news.created_at|date:"d M, Y" }}</small>
+                                    </div>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <div class="col-12 text-center">
+                                <p>Yangiliklar mavjud emas.</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Pagination -->
+                    {% if news_items.paginator.num_pages > 1 %}
+                        <div class="col-12 text-center wow fadeInUp mt-4" data-wow-delay="0.1s">
+                            <nav aria-label="Page navigation">
+                                <ul class="pagination justify-content-center">
+                                    {% if news_items.has_previous %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{ news_items.previous_page_number }}"
+                                               aria-label="Previous">
+                                                <span aria-hidden="true">«</span>
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                    {% for num in news_items.paginator.page_range %}
+                                        {% if news_items.number == num %}
+                                            <li class="page-item active"><a class="page-link" href="#">{{ num }}</a>
+                                            </li>
+                                        {% elif num > news_items.number|add:-3 and num < news_items.number|add:3 %}
+                                            <li class="page-item"><a class="page-link"
+                                                                     href="?page={{ num }}">{{ num }}</a></li>
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% if news_items.has_next %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page={{ news_items.next_page_number }}"
+                                               aria-label="Next">
+                                                <span aria-hidden="true">»</span>
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                </ul>
+                            </nav>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Yangilik List End -->
+
+    <style>
+        .news-card {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            min-height: 420px;
+            transition: transform 0.3s ease;
+        }
+
+        .news-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .news-img-container {
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .news-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .play-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 30px;
+            color: #fff;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            padding: 10px;
+            display: none;
+        }
+
+        .news-img-container:hover .play-icon {
+            display: block;
+        }
+
+        .news-body {
+            padding: 15px;
+            flex-grow: 1;
+        }
+
+        .news-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 10px;
+            transition: color 0.3s ease;
+        }
+
+        .news-title:hover {
+            color: #9ff699; /* user2 uchun mos rang */
+        }
+
+        .news-text {
+            font-size: 14px;
+            color: #666;
+            max-height: 60px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .news-footer {
+            padding: 10px 15px;
+            border-top: 1px solid #eee;
+            background: #f8f9fa;
+            text-align: right;
+            font-size: 12px;
+        }
+
+        .pagination .page-link {
+            color: #9ff699; /* user2 uchun mos rang */
+            border-radius: 5px;
+            margin: 0 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: #9ff699;
+            border-color: #9ff699;
+            color: white;
+        }
+
+        .pagination .page-item:hover .page-link {
+            background-color: #e9ecef;
+        }
+    </style>
+{% endblock %}

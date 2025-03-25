@@ -1,0 +1,242 @@
+{% extends 'base.html' %}
+{% block content %}
+    {% load static %}
+
+    <div class="container mt-5 mb-5" style="margin-left: 70px; width: 100%">
+        <!-- Top Row: Charts 1 and 3 -->
+        <div class="row mb-4">
+            <!-- Chart 1: Branches -->
+            <div class="col-md-5 mb-4">
+                <div class="card shadow-lg chart-card h-100">
+                    <div class="card-header bg-gradient-primary text-white text-center">
+                        <h5 class="mb-0">Filiallar</h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <canvas id="branchesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart 3: Categories -->
+            <div class="col-md-7 mb-4">
+                <div class="card shadow-lg chart-card h-100">
+                    <div class="card-header bg-gradient-info text-white text-center">
+                        <h5 class="mb-0">Kategoriyalar</h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <canvas id="categoriesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Row: Chart 2 -->
+        <div class="row">
+            <!-- Chart 2: Users -->
+            <div class="col-12">
+                <div class="card shadow-lg chart-card">
+                    <div class="card-header bg-gradient-success text-white text-center">
+                        <h5 class="mb-0">Foydalanuvchilar</h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <canvas id="usersChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom CSS -->
+    <style>
+        .chart-card {
+            transition: all 0.3s ease;
+            border-radius: 20px;
+            overflow: hidden;
+            background: #fff;
+        }
+
+        .chart-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15) !important;
+        }
+
+        .card-header {
+            padding: 1.25rem;
+            font-weight: 600;
+            border-bottom: none;
+        }
+
+        .bg-gradient-primary {
+            background: linear-gradient(45deg, #007bff, #00b4ff);
+        }
+
+        .bg-gradient-success {
+            background: linear-gradient(45deg, #28a745, #34ce57);
+        }
+
+        .bg-gradient-info {
+            background: linear-gradient(45deg, #17a2b8, #1ccdd8);
+        }
+
+        canvas {
+            max-height: 350px !important;
+        }
+
+        .card-body {
+            background: #f8f9fa;
+        }
+    </style>
+
+    <!-- JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Chart 1: Branches (Pie Chart)
+        const branchesChart = new Chart(document.getElementById('branchesChart'), {
+            type: 'pie',
+            data: {
+                labels: ['TUIT', 'Branch B', 'Branch C', 'Branch D'],
+                datasets: [{
+                    data: [30, 25, 20, 25],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.9)',
+                        'rgba(54, 162, 235, 0.9)',
+                        'rgba(255, 206, 86, 0.9)',
+                        'rgba(75, 192, 192, 0.9)'
+                    ],
+                    borderWidth: 3,
+                    borderColor: '#fff',
+                    hoverOffset: 10
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 20,
+                            font: {size: 14}
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0,0,0,0.9)',
+                        padding: 12,
+                        cornerRadius: 8
+                    }
+                },
+                animation: {
+                    animateScale: true,
+                    animateRotate: true,
+                    duration: 1000,
+                    easing: 'easeOutQuart'
+                }
+            }
+        });
+
+        // Chart 2: Users (Bar Chart)
+        const usersChart = new Chart(document.getElementById('usersChart'), {
+            type: 'bar',
+            data: {
+                labels: ['Admin', 'Moderator', '1-darajali foydalanuvchilar', '2-darajali foydalanuvchilar', '3-darajali foydalanuvchilar'],
+                datasets: [{
+                    label: 'Activity',
+                    data: [65, 59, 80, 81, 56],
+                    backgroundColor: 'rgba(75, 192, 192, 0.9)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 2,
+                    borderRadius: 10,
+                    barThickness: 40
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0,0,0,0.05)'
+                        },
+                        ticks: {
+                            font: {size: 14}
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            font: {size: 14}
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0,0,0,0.9)',
+                        padding: 12,
+                        cornerRadius: 8
+                    }
+                },
+                animation: {
+                    duration: 1500,
+                    easing: 'easeOutBounce'
+                }
+            }
+        });
+
+        // Chart 3: Categories (Doughnut Chart)
+        const categoriesChart = new Chart(document.getElementById('categoriesChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Dissertatsiya', 'Monografiya', 'Kitoblar', 'Darsliklar', "Qo'llanma", 'Ilmiy Loyiha', 'Ilmiy Jurnal', 'Ilmiy Maqola', 'Xorijiy Tajribalar', 'Boshqalar'],
+                datasets: [{
+                    data: [12, 19, 15, 25, 8, 13, 17, 11, 7, 18],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.9)',
+                        'rgba(54, 162, 235, 0.9)',
+                        'rgba(255, 206, 86, 0.9)',
+                        'rgba(75, 192, 192, 0.9)',
+                        'rgba(153, 102, 255, 0.9)',
+                        'rgba(255, 159, 64, 0.9)',
+                        'rgba(199, 199, 199, 0.9)',
+                        'rgba(83, 102, 255, 0.9)',
+                        'rgba(255, 140, 203, 0.9)',  // Och pushti
+                        'rgba(144, 238, 144, 0.9)'   // Och yashil
+                    ],
+                    borderWidth: 3,
+                    borderColor: '#fff',
+                    hoverOffset: 15
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            padding: 20,
+                            font: {size: 14}
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0,0,0,0.9)',
+                        padding: 12,
+                        cornerRadius: 8
+                    }
+                },
+                animation: {
+                    animateScale: true,
+                    animateRotate: true,
+                    duration: 1000,
+                    easing: 'easeOutQuart'
+                }
+            }
+        });
+    </script>
+
+{% endblock %}

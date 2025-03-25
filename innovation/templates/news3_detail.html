@@ -1,0 +1,150 @@
+{% extends 'user3_base.html' %}
+{% load static %}
+{% block content %}
+    <!-- Yangilik Detail Start -->
+    <div class="container-xxl py-5">
+        <div class="container">
+            <div class="row g-5">
+                <div class="col-lg-8 mx-auto wow fadeInUp" data-wow-delay="0.1s">
+                    <div class="news-detail-card">
+                        <div class="news-img-container">
+                            {% if news.image %}
+                                <img class="news-img" src="{{ news.image.url }}" alt="News Image">
+                            {% elif news.video %}
+                                <video class="news-img" controls>
+                                    <source src="{{ news.video.url }}" type="video/mp4">
+                                    Brauzeringiz video formatini qo'llab-quvvatlamaydi.
+                                </video>
+                            {% else %}
+                                <img class="news-img" src="{% static 'user/img/books.jpg' %}" alt="Default Image">
+                            {% endif %}
+                        </div>
+                        <div class="news-body">
+                            <h1 class="news-title">{{ news.title }}</h1>
+                            <p class="news-text">{{ news.content }}</p>
+                        </div>
+                        <div class="news-footer">
+                            <small class="text-muted">Yaratilgan: {{ news.created_at|date:"d M, Y" }}</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Related News -->
+            {% if related_news %}
+                <div class="row mt-5">
+                    <div class="col-12">
+                        <h3 class="mb-4">O'xshash Yangiliklar</h3>
+                        <div class="row g-4">
+                            {% for related in related_news %}
+                                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                                    <div class="news-card">
+                                        <div class="news-img-container">
+                                            {% if related.image %}
+                                                <img class="news-img" src="{{ related.image.url }}" alt="Related News">
+                                            {% elif related.video %}
+                                                <video class="news-img" muted>
+                                                    <source src="{{ related.video.url }}" type="video/mp4">
+                                                </video>
+                                            {% else %}
+                                                <img class="news-img" src="{% static 'user/img/books.jpg' %}"
+                                                     alt="Default">
+                                            {% endif %}
+                                        </div>
+                                        <div class="news-body">
+                                            <a class="news-title"
+                                               href="{% url 'news3_detail' related.id %}">{{ related.title }}</a>
+                                            <p class="news-text">{{ related.content|truncatewords:15 }}</p>
+                                        </div>
+                                        <div class="news-footer">
+                                            <small class="text-muted">{{ related.created_at|date:"d M, Y" }}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+            <div class="row mt-4">
+                <div class="col-12 text-center">
+                    <a href="{% url 'more3' %}" class="btn btn-primary py-2 px-4">Orqaga qaytish</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Yangilik Detail End -->
+
+    <style>
+        .news-detail-card {
+            background: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .news-img-container {
+            height: 400px;
+            overflow: hidden;
+        }
+
+        .news-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .news-body {
+            padding: 25px;
+        }
+
+        .news-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .news-text {
+            font-size: 16px;
+            color: #555;
+            line-height: 1.8;
+        }
+
+        .news-footer {
+            padding: 15px 25px;
+            border-top: 1px solid #eee;
+            background: #f8f9fa;
+            text-align: right;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background-color: #9ff699;
+            border-color: #9ff699;
+            color: #fff;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #8de686;
+            border-color: #8de686;
+        }
+
+        /* Related News Card */
+        .news-card {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            min-height: 350px;
+            transition: transform 0.3s ease;
+        }
+
+        .news-card:hover {
+            transform: translateY(-5px);
+        }
+    </style>
+{% endblock %}
