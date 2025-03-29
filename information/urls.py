@@ -190,7 +190,7 @@ urlpatterns = [
     path('m_other/delete/<int:other_id>/', m_other_delete, name='m_other_delete'),
     path('u1_other/<int:other_id>/', u1_other_detail, name='u1_other_detail'),
     path('u2_other/<int:pk>/', U2OtherDetailView.as_view(), name='u2_other_detail'),
-    path('u3_other/<int:pk>/', U3OtherDetailView.as_view(), name='u2_other_detail'),
+    path('u3_other/<int:pk>/', U3OtherDetailView.as_view(), name='u3_other_detail'),
 
     # Tajriba
     path('tajriba_list/', tajriba_list, name='tajriba_list'),

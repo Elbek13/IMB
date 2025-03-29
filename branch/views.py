@@ -1,24 +1,34 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from django.views.decorators.cache import cache_page
-from .models import Branch
-from .forms import BranchForm
 from django.core.paginator import Paginator
 from django.core.cache import cache
+from .models import Branch
+from .forms import BranchForm
 
-
-@cache_page(60 * 10)
+# @cache_page(60 * 10)
+@csrf_protect
+@csrf_exempt
 def branch_list(request):
     """ Filiallar ro‘yxatini ko‘rsatish uchun View """
+    # Limitni dinamik qilish (5, 10, 15)
+    limit_options = [5, 10, 15]
     limit = request.GET.get('limit', 10)
     page_number = request.GET.get('page', 1)
 
-    limit = min(max(int(limit), 1), 100) if str(limit).isdigit() else 10
+    # Limitni tekshirish va standart qiymat
+    limit = int(limit) if str(limit).isdigit() and int(limit) in limit_options else 10
     page_number = max(int(page_number), 1) if str(page_number).isdigit() else 1
 
+    # Ma'lumotlarni olish
     branches = Branch.objects.all()
     paginator = Paginator(branches, limit)
     page_obj = paginator.get_page(page_number)
+
+    # Sahifa raqamlari oralig‘ini cheklash (faqat 3 ta ko‘rinadi)
+    current_page = page_obj.number
+    total_pages = paginator.num_pages
+    page_range = range(max(1, current_page - 1), min(total_pages + 1, current_page + 2))
 
     # Success xabarini faqat redirectdan keyin ko‘rsatish
     success_message = None
@@ -30,11 +40,16 @@ def branch_list(request):
     return render(request, 'branch_list.html', {
         'branches': page_obj,
         'form': form,
-        'success_message': success_message
+        'success_message': success_message,
+        'page_range': page_range,  # Cheklangan sahifa oralig‘i
+        'limit': limit,           # Joriy limit
+        'limit_options': limit_options,  # Tanlash uchun limitlar
     })
 
 
+
 @csrf_protect
+@csrf_exempt
 def branch_create(request):
     if request.method == "POST":
         form = BranchForm(request.POST)
@@ -47,6 +62,7 @@ def branch_create(request):
 
 
 @csrf_protect
+@csrf_exempt
 def branch_edit(request, branch_id):
     branch = get_object_or_404(Branch, id=branch_id)
     if request.method == "POST":
@@ -65,6 +81,7 @@ def branch_edit(request, branch_id):
 
 
 @csrf_protect
+@csrf_exempt
 def branch_delete(request, branch_id):
     branch = get_object_or_404(Branch, id=branch_id)
     if request.method == "POST":
