@@ -66,13 +66,13 @@
         {% endif %}
 
         <!-- Pagination -->
-        {% if monografiyalar.has_other_pages %}
+        {% if is_paginated %}
             <nav aria-label="Page navigation">
                 <ul class="pagination justify-content-center mt-4">
-                    {% if monografiyalar.has_previous %}
+                    {% if page_obj.has_previous %}
                         <li class="page-item">
                             <a class="page-link" href="?page=
-                                    {{ monografiya.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
+                                    {{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}"
                                aria-label="Previous">
                                 <span aria-hidden="true">«</span>
                             </a>
@@ -83,20 +83,21 @@
                         </li>
                     {% endif %}
 
-                    {% for num in monografiyalar.paginator.page_range %}
-                        {% if monografiyalar.number == num %}
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
                             <li class="page-item active"><span class="page-link">{{ num }}</span></li>
-                        {% else %}
-                            <li class="page-item"><a class="page-link" href="?page=
-                                    {{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page=
+                                        {{ num }}{% if search_query %}&search={{ search_query }}{% endif %}">{{ num }}</a>
                             </li>
                         {% endif %}
                     {% endfor %}
 
-                    {% if monografiyalar.has_next %}
+                    {% if page_obj.has_next %}
                         <li class="page-item">
                             <a class="page-link" href="?page=
-                                    {{ monografiyalar.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
+                                    {{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}"
                                aria-label="Next">
                                 <span aria-hidden="true">»</span>
                             </a>

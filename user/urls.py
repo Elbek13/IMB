@@ -8,7 +8,7 @@ from user.views import admin_list, admin_delete, admin_create, admin_edit, user_
 from django.urls import path
 
 urlpatterns = [
-    path('', user_login, name='login'),
+    path('login/', user_login, name='login'),
     path('user_list/', user_list, name='user_list'),
     path('m_user_list/', m_user_list, name='m_user_list'),
     path('user1/', user1, name='user1'),

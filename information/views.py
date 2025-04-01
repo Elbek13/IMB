@@ -350,16 +350,20 @@ def global_search3(request):
 
     return render(request, "global_search3.html", context)
 
+
 class U3DissertatsiyaListView(LoginRequiredMixin, ListView):
     model = Dissertatsiya
     template_name = 'kategoriya/users/dissertatsiyalar/u3_dissertatsiyalar.html'
     context_object_name = 'dissertatsiyalar'
-    paginate_by = 8  # Sahifalash soni
+    paginate_by = 8  # Har bir sahifada 8 ta ma'lumot
 
     def get_queryset(self):
         user = self.request.user
-        queryset = super().get_queryset()
-
+        # `only` da ForeignKey maydonlarni qo'shamiz
+        queryset = Dissertatsiya.objects.select_related('branch', 'user').only(
+            'id', 'title', 'author', 'institution_name', 'degree', 'created_at',
+            'branch__id', 'branch__name', 'user__id', 'user__username'  # ForeignKey maydonlarni qo'shish
+        )
         search_query = self.request.GET.get('search', '').strip()
 
         # User3 uchun faqat LEVEL3 darajali dissertatsiyalarni filtrlaymiz
@@ -379,21 +383,17 @@ class U3DissertatsiyaListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Dissertatsiyalar Roʻyxati (User3)'
         context['search_query'] = self.request.GET.get('search', '')
-
-        # Qo‘lda sahifalashni tekshirish
-        dissertatsiyalar = self.get_queryset()
-        page = self.request.GET.get('page')
-        paginator = Paginator(dissertatsiyalar, self.paginate_by)
-
-        try:
-            dissertatsiyalar = paginator.page(page)
-        except PageNotAnInteger:
-            dissertatsiyalar = paginator.page(1)
-        except EmptyPage:
-            dissertatsiyalar = paginator.page(paginator.num_pages)
-
-        context['dissertatsiyalar'] = dissertatsiyalar
+        paginator = context['paginator']
+        page_obj = context['page_obj']
+        context['page_range'] = self.get_custom_page_range(paginator, page_obj)
         return context
+
+    def get_custom_page_range(self, paginator, page_obj, adjacent_pages=3):
+        current_page = page_obj.number
+        total_pages = paginator.num_pages
+        start_page = max(1, current_page - adjacent_pages)
+        end_page = min(total_pages, current_page + adjacent_pages)
+        return range(start_page, end_page + 1)
 
 
 class U3DissertatsiyaDetailView(LoginRequiredMixin, DetailView):
@@ -422,12 +422,15 @@ class U3MonografiyaListView(LoginRequiredMixin, ListView):
     model = Monografiya
     template_name = 'kategoriya/users/monografiyalar/u3_monografiyalar.html'
     context_object_name = 'monografiyalar'
-    paginate_by = 8
+    paginate_by = 10  # Har bir sahifada 10 ta ma'lumot
 
     def get_queryset(self):
         user = self.request.user
-        queryset = super().get_queryset()
-
+        # `only` da ForeignKey maydonlarni qo'shamiz
+        queryset = Monografiya.objects.select_related('branch', 'user').only(
+            'id', 'title', 'author', 'institution_name', 'degree', 'created_at',
+            'branch__id', 'branch__name', 'user__id', 'user__username'  # ForeignKey maydonlarni qo'shish
+        )
         search_query = self.request.GET.get('search', '').strip()
 
         # User3 uchun faqat LEVEL3 darajali monografiyalarni filtrlaymiz
@@ -447,21 +450,17 @@ class U3MonografiyaListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Monografiyalar Roʻyxati (User3)'
         context['search_query'] = self.request.GET.get('search', '')
-
-        # Sahifalashni qo‘lda tekshirish
-        monografiyalar = self.get_queryset()
-        page = self.request.GET.get('page')
-        paginator = Paginator(monografiyalar, self.paginate_by)
-
-        try:
-            monografiyalar = paginator.page(page)
-        except PageNotAnInteger:
-            monografiyalar = paginator.page(1)
-        except EmptyPage:
-            monografiyalar = paginator.page(paginator.num_pages)
-
-        context['monografiyalar'] = monografiyalar
+        paginator = context['paginator']
+        page_obj = context['page_obj']
+        context['page_range'] = self.get_custom_page_range(paginator, page_obj)
         return context
+
+    def get_custom_page_range(self, paginator, page_obj, adjacent_pages=3):
+        current_page = page_obj.number
+        total_pages = paginator.num_pages
+        start_page = max(1, current_page - adjacent_pages)
+        end_page = min(total_pages, current_page + adjacent_pages)
+        return range(start_page, end_page + 1)
 
 
 class U3MonografiyaDetailView(LoginRequiredMixin, DetailView):
@@ -1034,12 +1033,15 @@ class U2DissertatsiyaListView(LoginRequiredMixin, ListView):
     model = Dissertatsiya
     template_name = 'kategoriya/users/dissertatsiyalar/u2_dissertatsiyalar.html'
     context_object_name = 'dissertatsiyalar'
-    paginate_by = 8  # Sahifalash soni
+    paginate_by = 8  # Har bir sahifada 8 ta ma'lumot
 
     def get_queryset(self):
         user = self.request.user
-        queryset = super().get_queryset()
-
+        # `only` da ForeignKey maydonlarni qo'shamiz
+        queryset = Dissertatsiya.objects.select_related('branch', 'user').only(
+            'id', 'title', 'author', 'institution_name', 'degree', 'created_at',
+            'branch__id', 'branch__name', 'user__id', 'user__username'  # ForeignKey maydonlarni qo'shish
+        )
         search_query = self.request.GET.get('search', '').strip()
 
         if user.role == 'user2':
@@ -1060,21 +1062,17 @@ class U2DissertatsiyaListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Dissertatsiyalar Roʻyxati'
         context['search_query'] = self.request.GET.get('search', '')
-
-        # Qo‘lda sahifalashni tekshirish
-        dissertatsiyalar = self.get_queryset()
-        page = self.request.GET.get('page')
-        paginator = Paginator(dissertatsiyalar, self.paginate_by)
-
-        try:
-            dissertatsiyalar = paginator.page(page)
-        except PageNotAnInteger:
-            dissertatsiyalar = paginator.page(1)
-        except EmptyPage:
-            dissertatsiyalar = paginator.page(paginator.num_pages)
-
-        context['dissertatsiyalar'] = dissertatsiyalar
+        paginator = context['paginator']
+        page_obj = context['page_obj']
+        context['page_range'] = self.get_custom_page_range(paginator, page_obj)
         return context
+
+    def get_custom_page_range(self, paginator, page_obj, adjacent_pages=3):
+        current_page = page_obj.number
+        total_pages = paginator.num_pages
+        start_page = max(1, current_page - adjacent_pages)
+        end_page = min(total_pages, current_page + adjacent_pages)
+        return range(start_page, end_page + 1)
 
 
 class U2DissertatsiyaDetailView(LoginRequiredMixin, DetailView):
@@ -1103,12 +1101,15 @@ class U2MonografiyaListView(LoginRequiredMixin, ListView):
     model = Monografiya
     template_name = 'kategoriya/users/monografiyalar/u2_monografiyalar.html'
     context_object_name = 'monografiyalar'
-    paginate_by = 8
+    paginate_by = 10  # Har bir sahifada 10 ta ma'lumot
 
     def get_queryset(self):
         user = self.request.user
-        queryset = super().get_queryset()
-
+        # `only` da ForeignKey maydonlarni qo'shamiz
+        queryset = Monografiya.objects.select_related('branch', 'user').only(
+            'id', 'title', 'author', 'institution_name', 'degree', 'created_at',
+            'branch__id', 'branch__name', 'user__id', 'user__username'  # ForeignKey maydonlarni qo'shish
+        )
         search_query = self.request.GET.get('search', '').strip()
 
         if user.role == 'user2':
@@ -1129,21 +1130,17 @@ class U2MonografiyaListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Monografiyalar Roʻyxati'
         context['search_query'] = self.request.GET.get('search', '')
-
-        # Sahifalashni qo‘lda tekshirish
-        monografiyalar = self.get_queryset()
-        page = self.request.GET.get('page')
-        paginator = Paginator(monografiyalar, self.paginate_by)
-
-        try:
-            monografiyalar = paginator.page(page)
-        except PageNotAnInteger:
-            monografiyalar = paginator.page(1)
-        except EmptyPage:
-            monografiyalar = paginator.page(paginator.num_pages)
-
-        context['monografiyalar'] = monografiyalar
+        paginator = context['paginator']
+        page_obj = context['page_obj']
+        context['page_range'] = self.get_custom_page_range(paginator, page_obj)
         return context
+
+    def get_custom_page_range(self, paginator, page_obj, adjacent_pages=3):
+        current_page = page_obj.number
+        total_pages = paginator.num_pages
+        start_page = max(1, current_page - adjacent_pages)
+        end_page = min(total_pages, current_page + adjacent_pages)
+        return range(start_page, end_page + 1)
 
 
 class U2MonografiyaDetailView(LoginRequiredMixin, DetailView):
@@ -1720,8 +1717,36 @@ class U2OtherDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
-# Pagination va qidiruv uchun umumiy funksiya
 def paginate_and_filter(request, queryset, limit_default=10, search_fields=None):
+    limit = request.GET.get("limit", limit_default)
+    page = request.GET.get("page", 1)
+    search = request.GET.get("search", "").strip()
+
+    try:
+        limit = int(limit)
+        if limit <= 0 or limit > 100:
+            limit = limit_default
+    except ValueError:
+        limit = limit_default
+
+    queryset = queryset.select_related('branch', 'user')  # Optimallashtirish
+
+    if search and search_fields:
+        q_objects = Q()
+        for field in search_fields:
+            q_objects |= Q(**{f"{field}__icontains": search})
+        queryset = queryset.filter(q_objects)
+
+    queryset = queryset.order_by("-created_at")
+    paginator = Paginator(queryset, limit)  # Paginator obyekti yaratiladi
+    paginated_items = paginator.get_page(page)
+
+    return {
+        "items": paginated_items,
+        "total_pages": paginator.num_pages,
+        "search_query": search,
+        "paginator": paginator,  # Paginator obyekti qaytariladi
+    }
     limit = request.GET.get("limit", limit_default)
     page = request.GET.get("page", 1)
     search = request.GET.get("search", "").strip()
@@ -1795,7 +1820,8 @@ def handle_delete(request, model_class, instance_id, redirect_name):
 # Umumiy list va detail funksiyasi
 def resource_list(request, model_class, form_class, template, limit_default=10, search_fields=None, user=None,
                   moderator_filter=False):
-    queryset = model_class.objects.all()
+    # Ordering qo‘shildi: title bo‘yicha tartiblash
+    queryset = model_class.objects.all().order_by('-updated_at')
     if moderator_filter and request.user.role == 'moderator' and request.user.branch:
         queryset = queryset.filter(branch=request.user.branch)
 
@@ -1847,29 +1873,106 @@ def m_category_list(request):
 # Dissertatsiya
 @csrf_exempt
 def dissertatsiya_list(request):
-    return resource_list(
-        request, Dissertatsiya, DissertatsiyaForm, 'kategoriya/admin/dissertatsiya.html',
-        search_fields=['title', 'author', 'institution_name']
+    # Success message handling through session
+    success_message = request.session.pop('success_message', None) if request.method == 'GET' else None
+
+    # Optimized queryset with related fields
+    queryset = Dissertatsiya.objects.select_related('branch', 'user').all()
+
+    # Resource list with pagination and filtering
+    response = resource_list(
+        request,
+        Dissertatsiya,
+        DissertatsiyaForm,
+        'kategoriya/admin/dissertatsiya.html',
+        limit_default=10,  # 8 items per page
+        search_fields=['title', 'author', 'institution_name'],
+        user=request.user
     )
+
+    # Cache implementation
+    cache_key = f"dissertatsiya_list_{request.user.id}_{request.GET.get('page', 1)}_{request.GET.get('search', '')}"
+    cached_response = cache.get(cache_key)
+    if cached_response:
+        # Add success message to cached response if it exists
+        if success_message:
+            return render(request, 'kategoriya/admin/dissertatsiya.html', {
+                'dissertatsiyalar': response.context_data['dissertatsiyalar'],
+                'success_message': success_message,
+                'search_query': request.GET.get('search', '')
+            })
+        return cached_response
+
+    # Cache the response (5 minutes)
+    # cache.set(cache_key, response, timeout=300)
+
+    # Add success message to response if it exists
+    if success_message:
+        response.context_data['success_message'] = success_message
+
+    return response
 
 
 @role_required('moderator')
 @csrf_exempt
 def m_dissertatsiya_list(request):
+    # Moderatorning filiali borligini tekshirish
     if not request.user.branch:
         return HttpResponseForbidden("Moderator uchun branch belgilanmagan.")
-    return resource_list(
-        request, Dissertatsiya, DissertatsiyaForm, 'kategoriya/moderator/m_dissertatsiya.html',
-        search_fields=['title', 'author', 'institution_name'], user=request.user, moderator_filter=True
+
+    # Sessiyadan muvaffaqiyat xabarini olish va o‘chirish
+    success_message = request.session.pop('success_message', None) if request.method == 'GET' else None
+
+    # Kesh kalitini yaratish
+    cache_key = f"m_dissertatsiya_list_{request.user.id}_{request.GET.get('page', 1)}_{request.GET.get('search', '')}"
+    cached_response = cache.get(cache_key)
+
+    # Agar keshda ma’lumot bo‘lsa, uni qaytarish
+    if cached_response:
+        if hasattr(cached_response, 'context_data'):
+            context = cached_response.context_data
+            if success_message:
+                context['success_message'] = success_message
+            return render(request, 'kategoriya/moderator/m_dissertatsiya.html', context)
+        return cached_response
+
+    # resource_list dan natijani olish
+    response = resource_list(
+        request,
+        Dissertatsiya,
+        DissertatsiyaForm,
+        'kategoriya/moderator/m_dissertatsiya.html',
+        limit_default=10,
+        search_fields=['title', 'author', 'institution_name'],
+        user=request.user,
+        moderator_filter=True  # Moderator uchun filial bo‘yicha filtr
     )
+
+    # Agar success_message bo‘lsa, uni context_data ga qo‘shib qayta render qilamiz
+    if success_message and hasattr(response, 'context_data'):
+        response.context_data['success_message'] = success_message
+        cache.set(cache_key, response, timeout=300)  # Yangilangan javobni keshga saqlash
+        return render(request, 'kategoriya/moderator/m_dissertatsiya.html', response.context_data)
+
+    # Keshga saqlash (faqat response.context_data mavjud bo‘lsa)
+    if hasattr(response, 'context_data'):
+        cache.set(cache_key, response, timeout=300)
+
+    return response
 
 
 @role_required('moderator', 'administrator', 'user1', 'user2', 'user3')
 @csrf_exempt
 def u1_dissertatsiya_list(request):
     return resource_list(
-        request, Dissertatsiya, DissertatsiyaForm, 'kategoriya/users/dissertatsiyalar/u_dissertatsiyalar.html',
-        limit_default=8, search_fields=['title', 'author', 'institution_name'], user=request.user, moderator_filter=True
+        request,
+        Dissertatsiya,
+        DissertatsiyaForm,
+        'kategoriya/users/dissertatsiyalar/u_dissertatsiyalar.html',
+        limit_default=8,
+        search_fields=['title', 'author', 'institution_name'],
+        user=request.user,
+        moderator_filter=True
     )
 
 
@@ -1912,30 +2015,144 @@ def m_dissertatsiya_delete(request, dissertatsiya_id):
 # Monografiya
 @csrf_exempt
 def monografiya_list(request):
-    return resource_list(
-        request, Monografiya, MonografiyaForm, 'kategoriya/admin/monografiya.html',
-        search_fields=['title', 'author', 'institution_name']
+    # Success message ni session orqali olish va bir marta ko'rsatgandan keyin o'chirish
+    success_message = request.session.pop('success_message', None) if request.method == 'GET' else None
+
+    # Querysetni optimallashtirish
+    queryset = Monografiya.objects.select_related('branch', 'user').all()
+
+    # resource_list yordamida pagination va filtr
+    response = resource_list(
+        request,
+        Monografiya,
+        MonografiyaForm,
+        'kategoriya/admin/monografiya.html',
+        limit_default=8,  # Har sahifada 8 ta element
+        search_fields=['title', 'author', 'institution_name', 'degree', 'publication_year'],
+        user=request.user
     )
 
+    # Agar keshlash kerak bo'lsa, uni response darajasida qilamiz
+    cache_key = f"monografiya_list_{request.user.id}_{request.GET.get('page', 1)}_{request.GET.get('search', '')}"
+    cached_response = cache.get(cache_key)
+    if cached_response:
+        # Agar yangi success_message bo'lsa, uni qo'shamiz
+        if success_message:
+            return render(request, 'kategoriya/admin/monografiya.html', {
+                'monografiyalar': response.context_data['monografiyalar'],
+                'success_message': success_message,
+                'search_query': request.GET.get('search', '')
+            })
+        return cached_response
 
-@role_required('moderator')
-@csrf_exempt
+    # Keshga saqlash (5 daqiqa)
+    # cache.set(cache_key, response, timeout=300)
+
+    # Agar success_message mavjud bo'lsa, uni response ga qo'shamiz
+    if success_message:
+        response.context_data['success_message'] = success_message
+
+    return response
+
+
+@role_required('moderator')  # Faqat moderatorlar kira oladi
+@csrf_exempt  # CSRF tekshiruvini o‘chiradi
 def m_monografiya_list(request):
+    # Moderatorning filiali borligini tekshirish
     if not request.user.branch:
-        return HttpResponseForbidden("Moderator uchun branch belgilanmagan.")
-    return resource_list(
-        request, Monografiya, MonografiyaForm, 'kategoriya/moderator/m_monografiya.html',
-        search_fields=['title', 'author', 'institution_name'], user=request.user, moderator_filter=True
+        return HttpResponseForbidden("Moderator uchun filial belgilanmagan.")
+
+    # Sessiyadan muvaffaqiyat xabarini olish va o‘chirish
+    success_message = request.session.pop('success_message', None) if request.method == 'GET' else None
+
+    # Kesh kalitini yaratish
+    cache_key = f"m_monografiya_list_{request.user.id}_{request.GET.get('page', 1)}_{request.GET.get('search', '')}"
+    cached_response = cache.get(cache_key)
+
+    # Agar keshda ma’lumot bo‘lsa, uni qaytarish
+    if cached_response:
+        # Agar keshlangan javobda context_data mavjud bo‘lsa va success_message qo‘shilsa
+        if hasattr(cached_response, 'context_data'):
+            context = cached_response.context_data
+            if success_message:
+                context['success_message'] = success_message
+            return render(request, 'kategoriya/moderator/m_monografiya.html', context)
+        return cached_response  # Agar context_data yo‘q bo‘lsa, to‘g‘ridan-to‘g‘ri qaytariladi
+
+    # resource_list dan natijani olish
+    response = resource_list(
+        request,
+        Monografiya,
+        MonografiyaForm,
+        'kategoriya/moderator/m_monografiya.html',
+        limit_default=10,
+        search_fields=['title', 'author', 'institution_name'],
+        user=request.user,
+        moderator_filter=True  # Moderator uchun filial bo‘yicha filtr
     )
+
+    # Agar success_message bo‘lsa, uni context_data ga qo‘shib qayta render qilamiz
+    if success_message and hasattr(response, 'context_data'):
+        response.context_data['success_message'] = success_message
+        cache.set(cache_key, response, timeout=300)  # Yangilangan javobni keshga saqlash
+        return render(request, 'kategoriya/moderator/m_monografiya.html', response.context_data)
+
+    # Keshga saqlash (faqat response.context_data mavjud bo‘lsa)
+    if hasattr(response, 'context_data'):
+        cache.set(cache_key, response, timeout=300)
+
+    return response
+
+
+from django.core.cache import cache
 
 
 @role_required('moderator', 'administrator', 'user1', 'user2', 'user3')
 @csrf_exempt
 def u1_monografiya_list(request):
-    return resource_list(
-        request, Monografiya, MonografiyaForm, 'kategoriya/users/monografiyalar/u_monografiyalar.html',
-        limit_default=8, search_fields=['title', 'author', 'institution_name'], user=request.user, moderator_filter=True
+    # Kesh kaliti
+    cache_key = f"u1_monografiya_list_{request.user.id}_{request.GET.get('page', 1)}_{request.GET.get('search', '')}"
+    cached_data = cache.get(cache_key)
+    if cached_data:
+        return cached_data
+
+    queryset = Monografiya.objects.all()
+    if request.user.role == 'moderator' and request.user.branch:
+        queryset = queryset.filter(branch=request.user.branch)
+
+    # Pagination va filtr
+    pagination_data = paginate_and_filter(
+        request,
+        queryset,
+        limit_default=10,  # Har sahifada 10 ta element
+        search_fields=['title', 'author', 'institution_name']
     )
+    form = MonografiyaForm(user=request.user)
+
+    if request.method == "POST":
+        form = MonografiyaForm(request.POST, request.FILES, user=request.user)
+        if form.is_valid():
+            instance = form.save(commit=False)
+            instance.user = request.user
+            instance.save()
+            request.session['success'] = "Monografiya muvaffaqiyatli qo‘shildi!"
+            return redirect(request.path_info)
+
+    context = {
+        "monografiyalar": pagination_data["items"],
+        "branches": Branch.objects.filter(
+            id=request.user.branch.id) if request.user.role == 'moderator' and request.user.branch else Branch.objects.all(),
+        "success_message": request.session.pop('success', None),
+        "form": form,
+        "total_pages": pagination_data["total_pages"],
+        "search_query": pagination_data["search_query"],
+        "paginator": pagination_data["paginator"],  # Paginator obyekti qo‘shildi
+    }
+    response = render(request, 'kategoriya/users/monografiyalar/u_monografiyalar.html', context)
+
+    # Keshga saqlash
+    cache.set(cache_key, response, timeout=300)
+    return response
 
 
 def u1_monografiya_detail(request, monografiya_id):

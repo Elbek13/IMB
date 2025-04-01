@@ -10,7 +10,7 @@ class BaseModelForm(forms.ModelForm):
         model = BaseModel
         fields = [
             'branch', 'user', 'title', 'author', 'institution_name', 'keywords', 'publication_type', 'publication_year',
-            'description', 'content_type', 'degree', 'issn_isbn', 'file', 'image', 'slug'
+            'description', 'content_type', 'degree', 'issn_isbn', 'file', 'image'
         ]
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control'}),
@@ -25,7 +25,6 @@ class BaseModelForm(forms.ModelForm):
             'issn_isbn': forms.TextInput(attrs={'class': 'form-control'}),
             'file': forms.ClearableFileInput(attrs={'class': 'form-control'}),
             'image': forms.ClearableFileInput(attrs={'class': 'form-control'}),
-            'slug': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
     def clean_file(self):
@@ -247,7 +246,7 @@ class XorijiyTajribaForm(forms.ModelForm):
         model = Xorijiy_Tajriba
         fields = [
             'degree', 'title', 'author', 'country', 'Military_organization', 'material', 'made_in', 'anotation', 'keys',
-            'file', 'slug', 'image',
+            'file', 'image',
         ]
         widgets = {
             'anotation': forms.Textarea(attrs={'rows': 3}),

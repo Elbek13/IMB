@@ -381,27 +381,63 @@
                         </div>
                     </div>
 
-                    <!-- Sahifalash -->
+                    <!-- Pagination -->
                     <div class="d-flex justify-content-center">
                         <nav aria-label="Page navigation example">
                             <ul class="pagination justify-content-center">
+                                <!-- Previous button -->
                                 <li class="page-item {% if not dissertatsiyalar.has_previous %}disabled{% endif %}">
                                     <a class="page-link"
-                                       href="{% if dissertatsiyalar.has_previous %}?page={{ dissertatsiyalar.previous_page_number }}&limit={{ request.GET.limit }}&search=
-                                           {{ request.GET.search|urlencode }}{% else %}#{% endif %}">
+                                       href="{% if dissertatsiyalar.has_previous %}?page={{ dissertatsiyalar.previous_page_number }}&limit=
+                                           {{ request.GET.limit|default:8 }}{% if search_query %}&search={{ search_query|urlencode }}{% endif %}{% else %}#{% endif %}">
                                         <i class="fas fa-chevron-left"></i>
                                     </a>
                                 </li>
-                                {% for num in dissertatsiyalar.paginator.page_range %}
-                                    <li class="page-item {% if dissertatsiyalar.number == num %}active{% endif %}">
-                                        <a class="page-link text-primary font-weight-bold"
-                                           href="?page={{ num }}&limit={{ request.GET.limit }}&search={{ request.GET.search|urlencode }}">{{ num }}</a>
-                                    </li>
-                                {% endfor %}
+
+                                <!-- Show only 3 page numbers -->
+                                {% with start_page=dissertatsiyalar.number|add:-1 end_page=dissertatsiyalar.number|add:1 %}
+                                    {% if start_page < 1 %}
+                                        {% with start_page=1 end_page=3 %}
+                                            {% for num in dissertatsiyalar.paginator.page_range %}
+                                                {% if num >= start_page and num <= end_page %}
+                                                    <li class="page-item {% if dissertatsiyalar.number == num %}active{% endif %}">
+                                                        <a class="page-link text-primary font-weight-bold"
+                                                           href="?page={{ num }}&limit=
+                                                                   {{ request.GET.limit|default:8 }}{% if search_query %}&search={{ search_query|urlencode }}{% endif %}">{{ num }}</a>
+                                                    </li>
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endwith %}
+                                    {% elif end_page > dissertatsiyalar.paginator.num_pages %}
+                                        {% with start_page=dissertatsiyalar.paginator.num_pages|add:-2 end_page=dissertatsiyalar.paginator.num_pages %}
+                                            {% for num in dissertatsiyalar.paginator.page_range %}
+                                                {% if num >= start_page and num <= end_page %}
+                                                    <li class="page-item {% if dissertatsiyalar.number == num %}active{% endif %}">
+                                                        <a class="page-link text-primary font-weight-bold"
+                                                           href="?page={{ num }}&limit=
+                                                                   {{ request.GET.limit|default:8 }}{% if search_query %}&search={{ search_query|urlencode }}{% endif %}">{{ num }}</a>
+                                                    </li>
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endwith %}
+                                    {% else %}
+                                        {% for num in dissertatsiyalar.paginator.page_range %}
+                                            {% if num >= start_page and num <= end_page %}
+                                                <li class="page-item {% if dissertatsiyalar.number == num %}active{% endif %}">
+                                                    <a class="page-link text-primary font-weight-bold"
+                                                       href="?page={{ num }}&limit=
+                                                               {{ request.GET.limit|default:8 }}{% if search_query %}&search={{ search_query|urlencode }}{% endif %}">{{ num }}</a>
+                                                </li>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endif %}
+                                {% endwith %}
+
+                                <!-- Next button -->
                                 <li class="page-item {% if not dissertatsiyalar.has_next %}disabled{% endif %}">
                                     <a class="page-link"
-                                       href="{% if dissertatsiyalar.has_next %}?page={{ dissertatsiyalar.next_page_number }}&limit={{ request.GET.limit }}&search=
-                                           {{ request.GET.search|urlencode }}{% else %}#{% endif %}">
+                                       href="{% if dissertatsiyalar.has_next %}?page={{ dissertatsiyalar.next_page_number }}&limit=
+                                           {{ request.GET.limit|default:8 }}{% if search_query %}&search={{ search_query|urlencode }}{% endif %}{% else %}#{% endif %}">
                                         <i class="fas fa-chevron-right"></i>
                                     </a>
                                 </li>

@@ -69,11 +69,11 @@
         {% if dissertatsiyalar.has_other_pages %}
             <nav aria-label="Page navigation">
                 <ul class="pagination justify-content-center mt-4">
+                    <!-- Oldingi tugma -->
                     {% if dissertatsiyalar.has_previous %}
                         <li class="page-item">
                             <a class="page-link" href="?page=
-
-                                    {{ dissertatsiyalar.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
+                                    {{ dissertatsiyalar.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search|urlencode }}{% endif %}"
                                aria-label="Previous">
                                 <span aria-hidden="true">«</span>
                             </a>
@@ -84,22 +84,65 @@
                         </li>
                     {% endif %}
 
-                    {% for num in dissertatsiyalar.paginator.page_range %}
-                        {% if dissertatsiyalar.number == num %}
-                            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                    <!-- Sahifa raqamlari (faqat 3 ta ko'rsatiladi) -->
+                    {% with start_page=dissertatsiyalar.number|add:-1 end_page=dissertatsiyalar.number|add:1 %}
+                        {% if start_page < 1 %}
+                            {% with start_page=1 end_page=3 %}
+                                {% for num in dissertatsiyalar.paginator.page_range %}
+                                    {% if num <= end_page %}
+                                        {% if dissertatsiyalar.number == num %}
+                                            <li class="page-item active">
+                                                <span class="page-link">{{ num }}</span>
+                                            </li>
+                                        {% else %}
+                                            <li class="page-item">
+                                                <a class="page-link" href="?page=
+                                                        {{ num }}{% if request.GET.search %}&search={{ request.GET.search|urlencode }}{% endif %}">{{ num }}</a>
+                                            </li>
+                                        {% endif %}
+                                    {% endif %}
+                                {% endfor %}
+                            {% endwith %}
+                        {% elif end_page > dissertatsiyalar.paginator.num_pages %}
+                            {% with start_page=dissertatsiyalar.paginator.num_pages|add:-2 end_page=dissertatsiyalar.paginator.num_pages %}
+                                {% for num in dissertatsiyalar.paginator.page_range %}
+                                    {% if num >= start_page %}
+                                        {% if dissertatsiyalar.number == num %}
+                                            <li class="page-item active">
+                                                <span class="page-link">{{ num }}</span>
+                                            </li>
+                                        {% else %}
+                                            <li class="page-item">
+                                                <a class="page-link" href="?page=
+                                                        {{ num }}{% if request.GET.search %}&search={{ request.GET.search|urlencode }}{% endif %}">{{ num }}</a>
+                                            </li>
+                                        {% endif %}
+                                    {% endif %}
+                                {% endfor %}
+                            {% endwith %}
                         {% else %}
-                            <li class="page-item"><a class="page-link" href="?page=
-
-                                    {{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a>
-                            </li>
+                            {% for num in dissertatsiyalar.paginator.page_range %}
+                                {% if num >= start_page and num <= end_page %}
+                                    {% if dissertatsiyalar.number == num %}
+                                        <li class="page-item active">
+                                            <span class="page-link">{{ num }}</span>
+                                        </li>
+                                    {% else %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page=
+                                                    {{ num }}{% if request.GET.search %}&search={{ request.GET.search|urlencode }}{% endif %}">{{ num }}</a>
+                                        </li>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
                         {% endif %}
-                    {% endfor %}
+                    {% endwith %}
 
+                    <!-- Keyingi tugma -->
                     {% if dissertatsiyalar.has_next %}
                         <li class="page-item">
                             <a class="page-link" href="?page=
-
-                                    {{ dissertatsiyalar.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
+                                    {{ dissertatsiyalar.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search|urlencode }}{% endif %}"
                                aria-label="Next">
                                 <span aria-hidden="true">»</span>
                             </a>
