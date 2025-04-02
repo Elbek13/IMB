@@ -101,7 +101,7 @@ WSGI_APPLICATION = 'news.wsgi.application'
 DATABASES = {
     "default": {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        "NAME": "news",
+        "NAME": "NEWS",
         "USER": "elbek",
         "PASSWORD": "1",
         "HOST": "127.0.0.1",
@@ -166,4 +166,5 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 LOGIN_URL = '/login/'  # Kerakli yo'nalishga o'zgartiring
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+# AUTH_USER_MODEL = 'user.User'
 AUTH_USER_MODEL = 'user.User'

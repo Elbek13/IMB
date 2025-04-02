@@ -66,14 +66,13 @@
         {% endif %}
 
         <!-- Pagination -->
-        {% if risolalar.has_other_pages %}
+        {% if paginator.num_pages > 1 %}
             <nav aria-label="Page navigation">
                 <ul class="pagination justify-content-center mt-4">
                     {% if risolalar.has_previous %}
                         <li class="page-item">
                             <a class="page-link" href="?page=
-
-                                    {{ risola.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
+                                    {{ risolalar.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}"
                                aria-label="Previous">
                                 <span aria-hidden="true">«</span>
                             </a>
@@ -84,13 +83,13 @@
                         </li>
                     {% endif %}
 
-                    {% for num in risolalar.paginator.page_range %}
+                    {% for num in paginator.page_range %}
                         {% if risolalar.number == num %}
                             <li class="page-item active"><span class="page-link">{{ num }}</span></li>
-                        {% else %}
-                            <li class="page-item"><a class="page-link" href="?page=
-
-                                    {{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a>
+                        {% elif num > risolalar.number|add:'-3' and num < risolalar.number|add:'3' %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page=
+                                        {{ num }}{% if search_query %}&search={{ search_query }}{% endif %}">{{ num }}</a>
                             </li>
                         {% endif %}
                     {% endfor %}
@@ -98,8 +97,7 @@
                     {% if risolalar.has_next %}
                         <li class="page-item">
                             <a class="page-link" href="?page=
-
-                                    {{ risolalar.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
+                                    {{ risolalar.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}"
                                aria-label="Next">
                                 <span aria-hidden="true">»</span>
                             </a>

@@ -373,25 +373,66 @@
                     </div>
                     <!-- Sahifalash -->
                     <div class="d-flex justify-content-center">
-                        <nav aria-label="Page navigation example">
+                        <nav aria-label="Sahifa navigatsiyasi">
                             <ul class="pagination justify-content-center">
+                                <!-- Oldingi tugma -->
                                 <li class="page-item {% if not risolalar.has_previous %}disabled{% endif %}">
                                     <a class="page-link"
-                                       href="{% if risolalar.has_previous %}?page={{ risolalar.previous_page_number }}&limit={{ request.GET.limit }}&search=
-                                           {{ request.GET.search }}{% else %}#{% endif %}">
+                                       href="{% if risolalar.has_previous %}?page={{ risolalar.previous_page_number }}&limit=
+
+                                           {{ request.GET.limit|default:10 }}{% if search_query %}&search={{ search_query|urlencode }}{% endif %}{% else %}#{% endif %}">
                                         <i class="fas fa-chevron-left"></i>
                                     </a>
                                 </li>
-                                {% for num in risolalar.paginator.page_range %}
-                                    <li class="page-item {% if risolalar.number == num %}active{% endif %}">
-                                        <a class="page-link text-primary font-weight-bold"
-                                           href="?page={{ num }}&limit={{ request.GET.limit }}&search={{ request.GET.search }}">{{ num }}</a>
-                                    </li>
-                                {% endfor %}
+
+                                <!-- 3 ta sahifa raqamini ko‘rsatish -->
+                                {% with start_page=risolalar.number|add:-1 end_page=risolalar.number|add:1 %}
+                                    {% if start_page < 1 %}
+                                        {% with start_page=1 end_page=3 %}
+                                            {% for num in risolalar.paginator.page_range %}
+                                                {% if num >= start_page and num <= end_page %}
+                                                    <li class="page-item {% if risolalar.number == num %}active{% endif %}">
+                                                        <a class="page-link text-primary font-weight-bold"
+                                                           href="?page={{ num }}&limit=
+
+                                                                   {{ request.GET.limit|default:10 }}{% if search_query %}&search={{ search_query|urlencode }}{% endif %}">{{ num }}</a>
+                                                    </li>
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endwith %}
+                                    {% elif end_page > risolalar.paginator.num_pages %}
+                                        {% with start_page=risolalar.paginator.num_pages|add:-2 end_page=risolalar.paginator.num_pages %}
+                                            {% for num in risolalar.paginator.page_range %}
+                                                {% if num >= start_page and num <= end_page %}
+                                                    <li class="page-item {% if risolalar.number == num %}active{% endif %}">
+                                                        <a class="page-link text-primary font-weight-bold"
+                                                           href="?page={{ num }}&limit=
+
+                                                                   {{ request.GET.limit|default:10 }}{% if search_query %}&search={{ search_query|urlencode }}{% endif %}">{{ num }}</a>
+                                                    </li>
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endwith %}
+                                    {% else %}
+                                        {% for num in risolalar.paginator.page_range %}
+                                            {% if num >= start_page and num <= end_page %}
+                                                <li class="page-item {% if risolalar.number == num %}active{% endif %}">
+                                                    <a class="page-link text-primary font-weight-bold"
+                                                       href="?page={{ num }}&limit=
+
+                                                               {{ request.GET.limit|default:10 }}{% if search_query %}&search={{ search_query|urlencode }}{% endif %}">{{ num }}</a>
+                                                </li>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endif %}
+                                {% endwith %}
+
+                                <!-- Keyingi tugma -->
                                 <li class="page-item {% if not risolalar.has_next %}disabled{% endif %}">
                                     <a class="page-link"
-                                       href="{% if risolalar.has_next %}?page={{ risolalar.next_page_number }}&limit={{ request.GET.limit }}&search=
-                                           {{ request.GET.search }}{% else %}#{% endif %}">
+                                       href="{% if risolalar.has_next %}?page={{ risolalar.next_page_number }}&limit=
+
+                                           {{ request.GET.limit|default:10 }}{% if search_query %}&search={{ search_query|urlencode }}{% endif %}{% else %}#{% endif %}">
                                         <i class="fas fa-chevron-right"></i>
                                     </a>
                                 </li>

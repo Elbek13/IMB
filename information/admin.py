@@ -62,8 +62,8 @@ class MaqolaAdmin(admin.ModelAdmin):
 
 @admin.register(Xorijiy_Tajriba)
 class XorijiyTajribaAdmin(admin.ModelAdmin):
-    list_display = ('title', 'author', 'country', 'Military_organization', 'made_in')
-    list_filter = ('country', 'Military_organization', 'made_in')
+    list_display = ('title', 'author', 'country', 'military_organization', 'made_in')
+    list_filter = ('country', 'military_organization', 'made_in')
     search_fields = ('title', 'author', 'keys')
 
 

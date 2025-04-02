@@ -1,27 +1,20 @@
 {% extends 'base.html' %}
 {% block content %}
     {% load static %}
+
     <!-- Navbar -->
-    <nav
-            class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl"
-            id="navbarBlur"
-            data-scroll="false"
-    >
+    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl" id="navbarBlur"
+         data-scroll="false">
         <div class="container-fluid py-1 px-3 pt-0">
             <nav aria-label="breadcrumb">
-                <ol
-                        class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5"
-                >
+                <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
                     <li class="breadcrumb-item text-sm">
                         <a class="opacity-5 text-white" href="{% url 'dashboard' %}">Bosh Sahifa</a>
                     </li>
                     <li class="breadcrumb-item text-sm">
-                        <a class="opacity-5 text-white" href="{% url 'category_list' %}">Ketegoriyalar</a>
+                        <a class="opacity-5 text-white" href="{% url 'category_list' %}">Kategoriyalar</a>
                     </li>
-                    <li
-                            class="breadcrumb-item text-sm text-white active"
-                            aria-current="page"
-                    >
+                    <li class="breadcrumb-item text-sm text-white active" aria-current="page">
                         Xorijiy Tajribalar
                     </li>
                 </ol>
@@ -44,13 +37,19 @@
                         }, 3000);
                     </script>
                 {% endif %}
+
                 <div class="card mb-4 mt-4 mx-3">
                     <div class="card-header pb-0 d-flex justify-content-between align-items-center">
                         <h6>Ro‘yxat</h6>
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                data-bs-target="#addTajribaModal">
-                            Yangi Qo‘shish
-                        </button>
+                        <div class="d-flex align-items-center">
+                            <!-- Search Field -->
+                            <input type="text" id="searchInput" class="form-control me-2" placeholder="Qidirish..."
+                                   value="{{ search_query }}">
+                            <button type="button" class="btn btn-primary ms-2" data-bs-toggle="modal"
+                                    data-bs-target="#addTajribaModal">
+                                Yangi Qo‘shish
+                            </button>
+                        </div>
                     </div>
 
                     <div class="card-body px-0 pt-0 pb-2">
@@ -58,6 +57,7 @@
                             <table id="tajribaTable" class="table align-items-center justify-content-center mb-0">
                                 <thead>
                                 <tr>
+                                    <th>#</th>
                                     <th>Mavzu</th>
                                     <th>Muallif</th>
                                     <th>Davlat</th>
@@ -69,10 +69,11 @@
                                 <tbody>
                                 {% for tajriba in tajribalar %}
                                     <tr>
+                                        <td>{{ forloop.counter }}</td>
                                         <td>{{ tajriba.title }}</td>
                                         <td>{{ tajriba.author }}</td>
                                         <td>{{ tajriba.country }}</td>
-                                        <td>{{ tajriba.Military_organization }}</td>
+                                        <td>{{ tajriba.military_organization }}</td>
                                         <td>{{ tajriba.get_degree_display|default:"--" }}</td>
                                         <td>
                                             <button class="btn btn-warning btn-sm" data-bs-toggle="modal"
@@ -90,12 +91,14 @@
                                         </td>
                                     </tr>
 
-                                    <!-- Tahrirlash Modal -->
+                                    <!-- Edit Modal -->
                                     <div class="modal fade" id="editTajribaModal{{ tajriba.id }}" tabindex="-1"
                                          aria-hidden="true">
                                         <div class="modal-dialog modal-dialog-centered modal-lg">
-                                            <div class="modal-content">
-                                                <div class="modal-header bg-primary text-white d-flex justify-content-center">
+                                            <div class="modal-content"
+                                                 style="border-radius: 15px !important; box-shadow: 0 4px 20px rgba(0,0,0,0.1) !important;">
+                                                <div class="modal-header bg-primary text-white d-flex justify-content-center"
+                                                     style="border-radius: 15px 15px 0 0 !important;">
                                                     <h5 class="modal-title text-center">Tahrirlash</h5>
                                                     <button type="button" class="btn-close btn-close-white"
                                                             data-bs-dismiss="modal" aria-label="Close"></button>
@@ -104,142 +107,114 @@
                                                     <form method="POST" action="{% url 'tajriba_edit' tajriba.id %}"
                                                           enctype="multipart/form-data">
                                                         {% csrf_token %}
-
                                                         <div class="row g-3">
                                                             <div class="col-md-6">
                                                                 <label for="title{{ tajriba.id }}"
                                                                        class="form-label fw-bold">Mavzu</label>
                                                                 <input type="text" class="form-control"
                                                                        id="title{{ tajriba.id }}" name="title"
-                                                                       autocomplete="off"
-                                                                       value="{{ tajriba.title }}" required>
+                                                                       value="{{ tajriba.title }}" required
+                                                                       style="border-radius: 10px !important; padding: 12px !important;">
                                                             </div>
-
                                                             <div class="col-md-6">
                                                                 <label for="author{{ tajriba.id }}"
                                                                        class="form-label fw-bold">Muallif</label>
                                                                 <input type="text" class="form-control"
                                                                        id="author{{ tajriba.id }}" name="author"
-                                                                       autocomplete="off"
-                                                                       value="{{ tajriba.author }}" required>
+                                                                       value="{{ tajriba.author }}" required
+                                                                       style="border-radius: 10px !important; padding: 12px !important;">
                                                             </div>
-
                                                             <div class="col-md-6">
                                                                 <label for="country{{ tajriba.id }}"
                                                                        class="form-label fw-bold">Davlat</label>
                                                                 <input type="text" class="form-control"
                                                                        id="country{{ tajriba.id }}" name="country"
-                                                                       autocomplete="off"
-                                                                       value="{{ tajriba.country }}">
+                                                                       value="{{ tajriba.country }}"
+                                                                       style="border-radius: 10px !important; padding: 12px !important;">
                                                             </div>
-
                                                             <div class="col-md-6">
-                                                                <label for="Military_organization{{ tajriba.id }}"
+                                                                <label for="military_organization{{ tajriba.id }}"
                                                                        class="form-label fw-bold">Harbiy
                                                                     Tashkilot</label>
                                                                 <input type="text" class="form-control"
-                                                                       id="Military_organization{{ tajriba.id }}"
-                                                                       name="Military_organization" autocomplete="off"
-                                                                       value="{{ tajriba.Military_organization }}">
+                                                                       id="military_organization{{ tajriba.id }}"
+                                                                       name="military_organization"
+                                                                       value="{{ tajriba.military_organization }}"
+                                                                       style="border-radius: 10px !important; padding: 12px !important;">
                                                             </div>
-
                                                             <div class="col-md-6">
                                                                 <label for="material{{ tajriba.id }}"
                                                                        class="form-label fw-bold">Material</label>
                                                                 <input type="text" class="form-control"
                                                                        id="material{{ tajriba.id }}" name="material"
-                                                                       autocomplete="off"
-                                                                       value="{{ tajriba.material }}">
+                                                                       value="{{ tajriba.material }}"
+                                                                       style="border-radius: 10px !important; padding: 12px !important;">
                                                             </div>
-
                                                             <div class="col-md-6">
                                                                 <label for="made_in{{ tajriba.id }}"
                                                                        class="form-label fw-bold">Ishlab Chiqarilgan
-                                                                    Yili</label>
-                                                                <input type="number" class="form-control"
+                                                                    Tashkilot</label>
+                                                                <input type="text" class="form-control"
                                                                        id="made_in{{ tajriba.id }}" name="made_in"
-                                                                       autocomplete="off"
-                                                                       value="{{ tajriba.made_in }}">
+                                                                       value="{{ tajriba.made_in }}"
+                                                                       style="border-radius: 10px !important; padding: 12px !important;">
                                                             </div>
-
-                                                            <div class="col-md-12">
+                                                            <div class="col-md-6">
                                                                 <label for="anotation{{ tajriba.id }}"
                                                                        class="form-label fw-bold">Anotatsiya</label>
                                                                 <textarea class="form-control"
                                                                           id="anotation{{ tajriba.id }}"
-                                                                          name="anotation"
-                                                                          rows="3">{{ tajriba.anotation }}</textarea>
+                                                                          name="anotation" rows="3"
+                                                                          style="border-radius: 10px !important; padding: 12px !important;">{{ tajriba.anotation }}</textarea>
                                                             </div>
-
                                                             <div class="col-md-6">
                                                                 <label for="keys{{ tajriba.id }}"
                                                                        class="form-label fw-bold">Kalit So‘zlar</label>
                                                                 <input type="text" class="form-control"
                                                                        id="keys{{ tajriba.id }}" name="keys"
-                                                                       autocomplete="off"
-                                                                       value="{{ tajriba.keys }}">
+                                                                       value="{{ tajriba.keys }}"
+                                                                       style="border-radius: 10px !important; padding: 12px !important;">
                                                             </div>
-
                                                             <div class="col-md-6">
                                                                 <label for="degree{{ tajriba.id }}"
                                                                        class="form-label fw-bold">Daraja</label>
                                                                 <select class="form-select" id="degree{{ tajriba.id }}"
-                                                                        name="degree">
-                                                                    {% for value, label in form.degree.field.choices %}
+                                                                        name="degree"
+                                                                        style="border-radius: 10px !important; padding: 12px !important;">
+                                                                    {% for value, label in tajriba.DEGREE_CHOICES %}
                                                                         <option value="{{ value }}"
-                                                                                {% if tajriba.degree == value %}selected{% endif %}>
-                                                                            {{ label }}
-                                                                        </option>
+                                                                                {% if tajriba.degree == value %}selected{% endif %}>{{ label }}</option>
                                                                     {% endfor %}
                                                                 </select>
                                                             </div>
-
                                                             <div class="col-md-6">
                                                                 <label for="file{{ tajriba.id }}"
                                                                        class="form-label fw-bold">Fayl</label>
                                                                 <input type="file" class="form-control"
-                                                                       autocomplete="off"
-                                                                       id="file{{ tajriba.id }}" name="file">
+                                                                       id="file{{ tajriba.id }}" name="file"
+                                                                       style="border-radius: 10px !important; padding: 12px !important;">
                                                                 {% if tajriba.file %}
-                                                                    <small class="text-muted">
-                                                                        <a href="{{ tajriba.file.url }}" target="_blank"
-                                                                           download>Hozirgi faylni yuklab olish</a>
-                                                                    </small>
+                                                                    <small><a href="{{ tajriba.file.url }}"
+                                                                              target="_blank">Hozirgi fayl</a></small>
                                                                 {% endif %}
-                                                            </div>
-
-                                                            <div class="col-md-6">
-                                                                <label for="slug{{ tajriba.id }}"
-                                                                       class="form-label fw-bold">Qo'shimcha
-                                                                    maydon</label>
-                                                                <input type="text" class="form-control"
-                                                                       autocomplete="off"
-                                                                       id="slug{{ tajriba.id }}" name="slug"
-                                                                       value="{{ tajriba.slug }}">
                                                             </div>
                                                             <div class="col-md-6">
                                                                 <label for="image{{ tajriba.id }}"
                                                                        class="form-label fw-bold">Rasm</label>
                                                                 <input type="file" class="form-control"
-                                                                       autocomplete="off"
                                                                        id="image{{ tajriba.id }}" name="image"
-                                                                       accept="image/*">
+                                                                       accept="image/*"
+                                                                       style="border-radius: 10px !important; padding: 12px !important;">
                                                                 {% if tajriba.image %}
-                                                                    <small class="text-muted">
-                                                                        <a href="{{ tajriba.image.url }}"
-                                                                           target="_blank" download>Hozirgi rasmni
-                                                                            yuklab olish</a>
-                                                                    </small>
-                                                                    <br>
-                                                                    <img src="{{ tajriba.image.url }}" alt="Rasm"
-                                                                         class="img-thumbnail mt-2" width="150">
+                                                                    <small><a href="{{ tajriba.image.url }}"
+                                                                              target="_blank">Hozirgi rasm</a></small>
                                                                 {% endif %}
                                                             </div>
                                                         </div>
-
                                                         <div class="d-flex justify-content-end mt-4">
                                                             <button type="submit"
-                                                                    class="btn btn-success px-4 py-2 fw-bold">Saqlash
+                                                                    class="btn btn-success px-4 py-2 fw-bold"
+                                                                    style="border-radius: 10px !important;">Saqlash
                                                             </button>
                                                         </div>
                                                     </form>
@@ -248,12 +223,14 @@
                                         </div>
                                     </div>
 
-                                    <!-- O‘chirish Modal -->
+                                    <!-- Delete Modal -->
                                     <div class="modal fade" id="deleteTajribaModal{{ tajriba.id }}" tabindex="-1"
                                          aria-hidden="true">
                                         <div class="modal-dialog modal-dialog-centered">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
+                                            <div class="modal-content"
+                                                 style="border-radius: 15px !important; box-shadow: 0 4px 20px rgba(0,0,0,0.1) !important;">
+                                                <div class="modal-header"
+                                                     style="border-radius: 15px 15px 0 0 !important;">
                                                     <h5 class="modal-title">O‘chirish</h5>
                                                     <button type="button" class="btn-close"
                                                             data-bs-dismiss="modal"></button>
@@ -263,17 +240,57 @@
                                                     </p>
                                                     <form method="POST" action="{% url 'tajriba_delete' tajriba.id %}">
                                                         {% csrf_token %}
-                                                        <button type="submit" class="btn btn-danger">O‘chirish</button>
+                                                        <button type="submit" class="btn btn-danger"
+                                                                style="border-radius: 10px !important;">O‘chirish
+                                                        </button>
                                                     </form>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
 
-
+                                    <!-- View Modal -->
+                                    <div class="modal fade" id="tajribaModal{{ tajriba.id }}" tabindex="-1"
+                                         aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered modal-lg">
+                                            <div class="modal-content"
+                                                 style="border-radius: 15px !important; box-shadow: 0 4px 20px rgba(0,0,0,0.1) !important;">
+                                                <div class="modal-header bg-primary text-white"
+                                                     style="border-radius: 15px 15px 0 0 !important;">
+                                                    <h5 class="modal-title">{{ tajriba.title }}</h5>
+                                                    <button type="button" class="btn-close btn-close-white"
+                                                            data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p><strong>Muallif:</strong> {{ tajriba.author }}</p>
+                                                    <p><strong>Davlat:</strong> {{ tajriba.country }}</p>
+                                                    <p><strong>Harbiy
+                                                        Tashkilot:</strong> {{ tajriba.military_organization }}</p>
+                                                    <p>
+                                                        <strong>Daraja:</strong> {{ tajriba.get_degree_display|default:"--" }}
+                                                    </p>
+                                                    <p><strong>Material:</strong> {{ tajriba.material }}</p>
+                                                    <p><strong>Ishlab Chiqarilgan
+                                                        Tashkilot:</strong> {{ tajriba.made_in }}</p>
+                                                    <p><strong>Anotatsiya:</strong> {{ tajriba.anotation }}</p>
+                                                    <p><strong>Kalit So‘zlar:</strong> {{ tajriba.keys }}</p>
+                                                    {% if tajriba.file %}
+                                                        <p><strong>Fayl:</strong> <a href="{{ tajriba.file.url }}"
+                                                                                     target="_blank">Yuklab olish</a>
+                                                        </p>
+                                                    {% endif %}
+                                                    {% if tajriba.image %}
+                                                        <p><strong>Rasm:</strong> <img src="{{ tajriba.image.url }}"
+                                                                                       alt="Rasm" class="img-fluid"
+                                                                                       style="max-width: 300px;"></p>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 {% empty %}
                                     <tr>
-                                        <td colspan="6" class="text-center text-muted">Hozircha ma'lumotlar mavjud
+                                        <td colspan="7" class="text-center text-muted">Hozircha ma'lumotlar mavjud
                                             emas
                                         </td>
                                     </tr>
@@ -282,44 +299,18 @@
                             </table>
                         </div>
                     </div>
-
-                    <!-- Sahifalash -->
-                    <div class="d-flex justify-content-center">
-                        <nav aria-label="Page navigation example">
-                            <ul class="pagination justify-content-center">
-                                <li class="page-item {% if not users.has_previous %}disabled{% endif %}">
-                                    <a class="page-link" href="{% if users.has_previous %}?page=
-                                        {{ users.previous_page_number }}{% else %}#{% endif %}">
-                                        <i class="fas fa-chevron-left"></i>
-                                    </a>
-                                </li>
-                                {% for num in users.paginator.page_range %}
-                                    <li class="page-item {% if users.number == num %}active{% endif %}">
-                                        <a class="page-link text-primary font-weight-bold"
-                                           href="?page={{ num }}">{{ num }}</a>
-                                    </li>
-                                {% endfor %}
-                                <li class="page-item {% if not users.has_next %}disabled{% endif %}">
-                                    <a class="page-link" href="{% if users.has_next %}?page=
-                                        {{ users.next_page_number }}{% else %}#{% endif %}">
-                                        <i class="fas fa-chevron-right"></i>
-                                    </a>
-                                </li>
-                            </ul>
-                        </nav>
-                    </div>
                 </div>
             </div>
         </div>
     </main>
 
-
-    <!-- Yangi Tajriba qo‘shish uchun modal -->
+    <!-- Add Tajriba Modal -->
     <div class="modal fade" id="addTajribaModal" tabindex="-1" aria-labelledby="addTajribaModalLabel"
          aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content">
-                <div class="modal-header bg-primary text-white">
+            <div class="modal-content"
+                 style="border-radius: 15px !important; box-shadow: 0 4px 20px rgba(0,0,0,0.1) !important;">
+                <div class="modal-header bg-primary text-white" style="border-radius: 15px 15px 0 0 !important;">
                     <h5 class="modal-title" id="addTajribaModalLabel">Yangi Qo‘shish</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                             aria-label="Close"></button>
@@ -327,75 +318,22 @@
                 <div class="modal-body p-4">
                     <form method="POST" action="{% url 'tajriba_create' %}" enctype="multipart/form-data">
                         {% csrf_token %}
-
                         <div class="row g-3">
-                            <div class="col-md-6">
-                                <label for="{{ form.title.id_for_label }}" class="form-label fw-bold">Mavzu</label>
-                                {{ form.title }}
-                            </div>
-
-                            <div class="col-md-6">
-                                <label for="{{ form.author.id_for_label }}" class="form-label fw-bold">Muallif</label>
-                                {{ form.author }}
-                            </div>
-
-                            <div class="col-md-6">
-                                <label for="{{ form.country.id_for_label }}" class="form-label fw-bold">Davlat</label>
-                                {{ form.country }}
-                            </div>
-
-                            <div class="col-md-6">
-                                <label for="{{ form.Military_organization.id_for_label }}" class="form-label fw-bold">Harbiy
-                                    Tashkilot</label>
-                                {{ form.Military_organization }}
-                            </div>
-
-                            <div class="col-md-6">
-                                <label for="{{ form.material.id_for_label }}"
-                                       class="form-label fw-bold">Material</label>
-                                {{ form.material }}
-                            </div>
-
-                            <div class="col-md-6">
-                                <label for="{{ form.made_in.id_for_label }}" class="form-label fw-bold">Ishlab
-                                    Chiqarilgan Yili</label>
-                                {{ form.made_in }}
-                            </div>
-
-                            <div class="col-md-12">
-                                <label for="{{ form.anotation.id_for_label }}"
-                                       class="form-label fw-bold">Anotatsiya</label>
-                                {{ form.anotation }}
-                            </div>
-
-                            <div class="col-md-6">
-                                <label for="{{ form.keys.id_for_label }}" class="form-label fw-bold">Kalit
-                                    So‘zlar</label>
-                                {{ form.keys }}
-                            </div>
-
-                            <div class="col-md-6">
-                                <label for="{{ form.degree.id_for_label }}" class="form-label fw-bold">Daraja</label>
-                                {{ form.degree }}
-                            </div>
-
-                            <div class="col-md-6">
-                                <label for="{{ form.file.id_for_label }}" class="form-label fw-bold">Fayl</label>
-                                {{ form.file }}
-                            </div>
-                            <div class="col-md-6">
-                                <label for="{{ form.image.id_for_label }}" class="form-label fw-bold">Rasm</label>
-                                {{ form.image }}
-                            </div>
-
-                            <div class="col-md-6">
-                                <label for="{{ form.slug.id_for_label }}" class="form-label fw-bold">Slug</label>
-                                {{ form.slug }}
-                            </div>
+                            {% for field in form %}
+                                <div class="col-md-6">
+                                    <label for="{{ field.id_for_label }}"
+                                           class="form-label fw-bold">{{ field.label }}</label>
+                                    {{ field }}
+                                    {% if field.errors %}
+                                        <small class="text-danger">{{ field.errors }}</small>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
                         </div>
-
                         <div class="d-flex justify-content-end mt-4">
-                            <button type="submit" class="btn btn-success px-4 py-2 fw-bold">Qo‘shish</button>
+                            <button type="submit" class="btn btn-success px-4 py-2 fw-bold"
+                                    style="border-radius: 10px !important;">Qo‘shish
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -403,31 +341,37 @@
         </div>
     </div>
 
-
-
-    <!-- Bootstrap JS (shablon oxiriga qo‘shing) -->
+    <!-- Bootstrap JS -->
     <script src="{% static 'user/js/bundle.min.js' %}"></script>
     <!-- JavaScript -->
     <script>
-        document.getElementById('limitSelect').addEventListener('change', function () {
-            let selectedLimit = this.value;
-            let url = new URL(window.location.href);
-            url.searchParams.set('limit', selectedLimit);
-            window.location.href = url.toString();
-        });
-        document.getElementById("searchInput").addEventListener("keyup", function () {
-            var searchValue = this.value.toLowerCase();
-            var tableRows = document.querySelectorAll("#userTable tbody tr");
-
-            tableRows.forEach(row => {
-                var rowText = row.innerText.toLowerCase();
-                if (rowText.includes(searchValue)) {
-                    row.style.display = "";
-                } else {
-                    row.style.display = "none";
-                }
-            });
+        // Search Functionality
+        document.getElementById('searchInput').addEventListener('keyup', function (e) {
+            if (e.key === 'Enter') {
+                let url = new URL(window.location.href);
+                url.searchParams.set('search', this.value);
+                window.location.href = url.toString();
+            }
         });
     </script>
 
+    <!-- Inline CSS for Input Styling -->
+    <style>
+        .form-control, .form-select {
+            border-radius: 10px !important;
+            padding: 12px !important;
+            border: 1px solid #ced4da !important;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+            transition: border-color 0.3s ease !important;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #007bff !important;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5) !important;
+        }
+
+        .btn {
+            border-radius: 10px !important;
+        }
+    </style>
 {% endblock %}

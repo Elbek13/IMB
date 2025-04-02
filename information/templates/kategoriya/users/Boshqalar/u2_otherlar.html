@@ -66,14 +66,13 @@
         {% endif %}
 
         <!-- Pagination -->
-        {% if otherlar.has_other_pages %}
+        {% if is_paginated %}
             <nav aria-label="Page navigation">
                 <ul class="pagination justify-content-center mt-4">
-                    {% if otherlar.has_previous %}
+                    {% if page_obj.has_previous %}
                         <li class="page-item">
                             <a class="page-link" href="?page=
-
-                                    {{ otherlar.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search|urlencode }}{% endif %}"
+                                    {{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}"
                                aria-label="Previous">
                                 <span aria-hidden="true">«</span>
                             </a>
@@ -84,25 +83,21 @@
                         </li>
                     {% endif %}
 
-                    {% for num in otherlar.paginator.page_range %}
-                        {% if otherlar.number == num %}
-                            <li class="page-item active">
-                                <span class="page-link">{{ num }}</span>
-                            </li>
+                    {% for num in page_range %}
+                        {% if page_obj.number == num %}
+                            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
                         {% else %}
                             <li class="page-item">
                                 <a class="page-link" href="?page=
-
-                                        {{ num }}{% if request.GET.search %}&search={{ request.GET.search|urlencode }}{% endif %}">{{ num }}</a>
+                                        {{ num }}{% if search_query %}&search={{ search_query }}{% endif %}">{{ num }}</a>
                             </li>
                         {% endif %}
                     {% endfor %}
 
-                    {% if otherlar.has_next %}
+                    {% if page_obj.has_next %}
                         <li class="page-item">
                             <a class="page-link" href="?page=
-
-                                    {{ otherlar.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search|urlencode }}{% endif %}"
+                                    {{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}"
                                aria-label="Next">
                                 <span aria-hidden="true">»</span>
                             </a>

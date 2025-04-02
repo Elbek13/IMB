@@ -489,12 +489,15 @@ class U3RisolaListView(LoginRequiredMixin, ListView):
     model = Risola
     template_name = 'kategoriya/users/Kitob va Risola/u3_risolalar.html'
     context_object_name = 'risolalar'
-    paginate_by = 8
+    paginate_by = 8  # Har bir sahifada 8 ta ma'lumot
 
     def get_queryset(self):
         user = self.request.user
-        queryset = super().get_queryset()
-
+        # `select_related` bilan ForeignKey maydonlarni optimallashtiramiz
+        queryset = Risola.objects.select_related('branch', 'user').only(
+            'id', 'title', 'author', 'institution_name', 'degree', 'created_at',
+            'branch__id', 'branch__name', 'user__id', 'user__username'
+        )
         search_query = self.request.GET.get('search', '').strip()
 
         # User3 uchun faqat LEVEL3 darajali risolalarni filtrlaymiz
@@ -514,21 +517,17 @@ class U3RisolaListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Risolalar Roʻyxati (User3)'
         context['search_query'] = self.request.GET.get('search', '')
-
-        # Sahifalashni qo‘lda tekshirish
-        risolalar = self.get_queryset()
-        page = self.request.GET.get('page')
-        paginator = Paginator(risolalar, self.paginate_by)
-
-        try:
-            risolalar = paginator.page(page)
-        except PageNotAnInteger:
-            risolalar = paginator.page(1)
-        except EmptyPage:
-            risolalar = paginator.page(paginator.num_pages)
-
-        context['risolalar'] = risolalar
+        paginator = context['paginator']
+        page_obj = context['page_obj']
+        context['page_range'] = self.get_custom_page_range(paginator, page_obj)
         return context
+
+    def get_custom_page_range(self, paginator, page_obj, adjacent_pages=3):
+        current_page = page_obj.number
+        total_pages = paginator.num_pages
+        start_page = max(1, current_page - adjacent_pages)
+        end_page = min(total_pages, current_page + adjacent_pages)
+        return range(start_page, end_page + 1)
 
 
 class U3RisolaDetailView(LoginRequiredMixin, DetailView):
@@ -557,12 +556,15 @@ class U3DarslikListView(LoginRequiredMixin, ListView):
     model = Darslik
     template_name = 'kategoriya/users/Darsliklar/u3_darsliklar.html'
     context_object_name = 'darsliklar'
-    paginate_by = 8
+    paginate_by = 8  # Har bir sahifada 8 ta ma'lumot
 
     def get_queryset(self):
         user = self.request.user
-        queryset = super().get_queryset()
-
+        # `select_related` bilan ForeignKey maydonlarni optimallashtiramiz
+        queryset = Darslik.objects.select_related('branch', 'user').only(
+            'id', 'title', 'author', 'institution_name', 'degree', 'created_at',
+            'branch__id', 'branch__name', 'user__id', 'user__username'
+        )
         search_query = self.request.GET.get('search', '').strip()
 
         # User3 uchun faqat LEVEL3 darajali darsliklarni filtrlaymiz
@@ -582,21 +584,17 @@ class U3DarslikListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Darsliklar Roʻyxati (User3)'
         context['search_query'] = self.request.GET.get('search', '')
-
-        # Sahifalashni qo‘lda qo‘shish
-        darsliklar = self.get_queryset()
-        page = self.request.GET.get('page')
-        paginator = Paginator(darsliklar, self.paginate_by)
-
-        try:
-            darsliklar = paginator.page(page)
-        except PageNotAnInteger:
-            darsliklar = paginator.page(1)
-        except EmptyPage:
-            darsliklar = paginator.page(paginator.num_pages)
-
-        context['darsliklar'] = darsliklar
+        paginator = context['paginator']
+        page_obj = context['page_obj']
+        context['page_range'] = self.get_custom_page_range(paginator, page_obj)
         return context
+
+    def get_custom_page_range(self, paginator, page_obj, adjacent_pages=3):
+        current_page = page_obj.number
+        total_pages = paginator.num_pages
+        start_page = max(1, current_page - adjacent_pages)
+        end_page = min(total_pages, current_page + adjacent_pages)
+        return range(start_page, end_page + 1)
 
 
 class U3DarslikDetailView(LoginRequiredMixin, DetailView):
@@ -625,12 +623,15 @@ class U3QollanmaListView(LoginRequiredMixin, ListView):
     model = Qollanma
     template_name = 'kategoriya/users/Qollanmalar/u3_qollanmalar.html'
     context_object_name = 'qollanmalar'
-    paginate_by = 8
+    paginate_by = 8  # Har bir sahifada 8 ta ma'lumot
 
     def get_queryset(self):
         user = self.request.user
-        queryset = super().get_queryset()
-
+        # `select_related` bilan ForeignKey maydonlarni optimallashtiramiz
+        queryset = Qollanma.objects.select_related('branch', 'user').only(
+            'id', 'title', 'author', 'institution_name', 'degree', 'created_at',
+            'branch__id', 'branch__name', 'user__id', 'user__username'
+        )
         search_query = self.request.GET.get('search', '').strip()
 
         # User3 uchun faqat LEVEL3 darajali qo‘llanmalarni filtrlaymiz
@@ -650,21 +651,17 @@ class U3QollanmaListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Qo‘llanmalar Roʻyxati (User3)'
         context['search_query'] = self.request.GET.get('search', '')
-
-        # Sahifalashni qo‘lda qo‘shish
-        qollanmalar = self.get_queryset()
-        page = self.request.GET.get('page')
-        paginator = Paginator(qollanmalar, self.paginate_by)
-
-        try:
-            qollanmalar = paginator.page(page)
-        except PageNotAnInteger:
-            qollanmalar = paginator.page(1)
-        except EmptyPage:
-            qollanmalar = paginator.page(paginator.num_pages)
-
-        context['qollanmalar'] = qollanmalar
+        paginator = context['paginator']
+        page_obj = context['page_obj']
+        context['page_range'] = self.get_custom_page_range(paginator, page_obj)
         return context
+
+    def get_custom_page_range(self, paginator, page_obj, adjacent_pages=3):
+        current_page = page_obj.number
+        total_pages = paginator.num_pages
+        start_page = max(1, current_page - adjacent_pages)
+        end_page = min(total_pages, current_page + adjacent_pages)
+        return range(start_page, end_page + 1)
 
 
 class U3QollanmaDetailView(LoginRequiredMixin, DetailView):
@@ -693,12 +690,15 @@ class U3LoyihaListView(LoginRequiredMixin, ListView):
     model = Loyiha
     template_name = 'kategoriya/users/Loyihalar/u3_loyihalar.html'
     context_object_name = 'loyihalar'
-    paginate_by = 8
+    paginate_by = 8  # Har bir sahifada 8 ta ma'lumot
 
     def get_queryset(self):
         user = self.request.user
-        queryset = super().get_queryset()
-
+        # `select_related` bilan ForeignKey maydonlarni optimallashtiramiz
+        queryset = Loyiha.objects.select_related('branch', 'user').only(
+            'id', 'title', 'author', 'institution_name', 'degree', 'created_at',
+            'branch__id', 'branch__name', 'user__id', 'user__username'
+        )
         search_query = self.request.GET.get('search', '').strip()
 
         # User3 uchun faqat LEVEL3 darajali loyihalarni filtrlaymiz
@@ -718,21 +718,17 @@ class U3LoyihaListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Loyihalar Roʻyxati (User3)'
         context['search_query'] = self.request.GET.get('search', '')
-
-        # Sahifalashni qo‘lda qo‘shish
-        loyihalar = self.get_queryset()
-        page = self.request.GET.get('page')
-        paginator = Paginator(loyihalar, self.paginate_by)
-
-        try:
-            loyihalar = paginator.page(page)
-        except PageNotAnInteger:
-            loyihalar = paginator.page(1)
-        except EmptyPage:
-            loyihalar = paginator.page(paginator.num_pages)
-
-        context['loyihalar'] = loyihalar
+        paginator = context['paginator']
+        page_obj = context['page_obj']
+        context['page_range'] = self.get_custom_page_range(paginator, page_obj)
         return context
+
+    def get_custom_page_range(self, paginator, page_obj, adjacent_pages=3):
+        current_page = page_obj.number
+        total_pages = paginator.num_pages
+        start_page = max(1, current_page - adjacent_pages)
+        end_page = min(total_pages, current_page + adjacent_pages)
+        return range(start_page, end_page + 1)
 
 
 class U3LoyihaDetailView(LoginRequiredMixin, DetailView):
@@ -761,12 +757,15 @@ class U3JurnalListView(LoginRequiredMixin, ListView):
     model = Jurnal
     template_name = 'kategoriya/users/Jurnallar/u3_jurnallar.html'
     context_object_name = 'jurnallar'
-    paginate_by = 8
+    paginate_by = 8  # Har bir sahifada 8 ta ma'lumot
 
     def get_queryset(self):
         user = self.request.user
-        queryset = super().get_queryset()
-
+        # `select_related` bilan ForeignKey maydonlarni optimallashtiramiz
+        queryset = Jurnal.objects.select_related('branch', 'user').only(
+            'id', 'title', 'author', 'institution_name', 'degree', 'created_at',
+            'branch__id', 'branch__name', 'user__id', 'user__username'
+        )
         search_query = self.request.GET.get('search', '').strip()
 
         # User3 uchun faqat LEVEL3 darajali jurnallarni filtrlaymiz
@@ -786,21 +785,17 @@ class U3JurnalListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Jurnallar Roʻyxati (User3)'
         context['search_query'] = self.request.GET.get('search', '')
-
-        # Sahifalashni qo‘lda qo‘shish
-        jurnallar = self.get_queryset()
-        page = self.request.GET.get('page')
-        paginator = Paginator(jurnallar, self.paginate_by)
-
-        try:
-            jurnallar = paginator.page(page)
-        except PageNotAnInteger:
-            jurnallar = paginator.page(1)
-        except EmptyPage:
-            jurnallar = paginator.page(paginator.num_pages)
-
-        context['jurnallar'] = jurnallar
+        paginator = context['paginator']
+        page_obj = context['page_obj']
+        context['page_range'] = self.get_custom_page_range(paginator, page_obj)
         return context
+
+    def get_custom_page_range(self, paginator, page_obj, adjacent_pages=3):
+        current_page = page_obj.number
+        total_pages = paginator.num_pages
+        start_page = max(1, current_page - adjacent_pages)
+        end_page = min(total_pages, current_page + adjacent_pages)
+        return range(start_page, end_page + 1)
 
 
 class U3JurnalDetailView(LoginRequiredMixin, DetailView):
@@ -829,12 +824,15 @@ class U3MaqolaListView(LoginRequiredMixin, ListView):
     model = Maqola
     template_name = 'kategoriya/users/Maqolalar/u3_maqolalar.html'
     context_object_name = 'maqolalar'
-    paginate_by = 8
+    paginate_by = 8  # Har bir sahifada 8 ta ma'lumot
 
     def get_queryset(self):
         user = self.request.user
-        queryset = super().get_queryset()
-
+        # `select_related` bilan ForeignKey maydonlarni optimallashtiramiz
+        queryset = Maqola.objects.select_related('branch', 'user').only(
+            'id', 'title', 'author', 'institution_name', 'degree', 'created_at',
+            'branch__id', 'branch__name', 'user__id', 'user__username'
+        )
         search_query = self.request.GET.get('search', '').strip()
 
         # User3 uchun faqat LEVEL3 darajali maqolalarni filtrlaymiz
@@ -854,21 +852,17 @@ class U3MaqolaListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Maqolalar Roʻyxati (User3)'
         context['search_query'] = self.request.GET.get('search', '')
-
-        # Sahifalashni qo‘lda qo‘shish
-        maqolalar = self.get_queryset()
-        page = self.request.GET.get('page')
-        paginator = Paginator(maqolalar, self.paginate_by)
-
-        try:
-            maqolalar = paginator.page(page)
-        except PageNotAnInteger:
-            maqolalar = paginator.page(1)
-        except EmptyPage:
-            maqolalar = paginator.page(paginator.num_pages)
-
-        context['maqolalar'] = maqolalar
+        paginator = context['paginator']
+        page_obj = context['page_obj']
+        context['page_range'] = self.get_custom_page_range(paginator, page_obj)
         return context
+
+    def get_custom_page_range(self, paginator, page_obj, adjacent_pages=3):
+        current_page = page_obj.number
+        total_pages = paginator.num_pages
+        start_page = max(1, current_page - adjacent_pages)
+        end_page = min(total_pages, current_page + adjacent_pages)
+        return range(start_page, end_page + 1)
 
 
 class U3MaqolaDetailView(LoginRequiredMixin, DetailView):
@@ -897,12 +891,15 @@ class U3TajribaListView(LoginRequiredMixin, ListView):
     model = Xorijiy_Tajriba
     template_name = 'kategoriya/users/Xorijiy_Tajribalar/u3_tajribalar.html'
     context_object_name = 'tajribalar'
-    paginate_by = 8
+    paginate_by = 8  # Har bir sahifada 8 ta ma'lumot
 
     def get_queryset(self):
         user = self.request.user
-        queryset = super().get_queryset()
-
+        # `select_related` bilan ForeignKey maydonlarni optimallashtiramiz
+        queryset = Xorijiy_Tajriba.objects.select_related('branch', 'user').only(
+            'id', 'title', 'author', 'institution_name', 'degree', 'created_at',
+            'branch__id', 'branch__name', 'user__id', 'user__username'
+        )
         search_query = self.request.GET.get('search', '').strip()
 
         # User3 uchun faqat LEVEL3 darajali tajribalarni filtrlaymiz
@@ -922,21 +919,17 @@ class U3TajribaListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Xorijiy Tajribalar Roʻyxati (User3)'
         context['search_query'] = self.request.GET.get('search', '')
-
-        # Sahifalashni qo‘lda qo‘shish
-        tajribalar = self.get_queryset()
-        page = self.request.GET.get('page')
-        paginator = Paginator(tajribalar, self.paginate_by)
-
-        try:
-            tajribalar = paginator.page(page)
-        except PageNotAnInteger:
-            tajribalar = paginator.page(1)
-        except EmptyPage:
-            tajribalar = paginator.page(paginator.num_pages)
-
-        context['tajribalar'] = tajribalar
+        paginator = context['paginator']
+        page_obj = context['page_obj']
+        context['page_range'] = self.get_custom_page_range(paginator, page_obj)
         return context
+
+    def get_custom_page_range(self, paginator, page_obj, adjacent_pages=3):
+        current_page = page_obj.number
+        total_pages = paginator.num_pages
+        start_page = max(1, current_page - adjacent_pages)
+        end_page = min(total_pages, current_page + adjacent_pages)
+        return range(start_page, end_page + 1)
 
 
 class U3TajribaDetailView(LoginRequiredMixin, DetailView):
@@ -965,12 +958,15 @@ class U3OtherListView(LoginRequiredMixin, ListView):
     model = Other
     template_name = 'kategoriya/users/Boshqalar/u3_otherlar.html'
     context_object_name = 'otherlar'
-    paginate_by = 8
+    paginate_by = 8  # Har bir sahifada 8 ta ma'lumot
 
     def get_queryset(self):
         user = self.request.user
-        queryset = super().get_queryset()
-
+        # `select_related` bilan ForeignKey maydonlarni optimallashtiramiz
+        queryset = Other.objects.select_related('branch', 'user').only(
+            'id', 'title', 'author', 'institution_name', 'degree', 'created_at',
+            'branch__id', 'branch__name', 'user__id', 'user__username'
+        )
         search_query = self.request.GET.get('search', '').strip()
 
         # User3 uchun faqat LEVEL3 darajali "Other" ma'lumotlarni filtrlaymiz
@@ -990,21 +986,17 @@ class U3OtherListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Boshqa Ma\'lumotlar Roʻyxati (User3)'
         context['search_query'] = self.request.GET.get('search', '')
-
-        # Sahifalashni qo‘lda qo‘shish
-        otherlar = self.get_queryset()
-        page = self.request.GET.get('page')
-        paginator = Paginator(otherlar, self.paginate_by)
-
-        try:
-            otherlar = paginator.page(page)
-        except PageNotAnInteger:
-            otherlar = paginator.page(1)
-        except EmptyPage:
-            otherlar = paginator.page(paginator.num_pages)
-
-        context['otherlar'] = otherlar
+        paginator = context['paginator']
+        page_obj = context['page_obj']
+        context['page_range'] = self.get_custom_page_range(paginator, page_obj)
         return context
+
+    def get_custom_page_range(self, paginator, page_obj, adjacent_pages=3):
+        current_page = page_obj.number
+        total_pages = paginator.num_pages
+        start_page = max(1, current_page - adjacent_pages)
+        end_page = min(total_pages, current_page + adjacent_pages)
+        return range(start_page, end_page + 1)
 
 
 class U3OtherDetailView(LoginRequiredMixin, DetailView):
@@ -1173,8 +1165,11 @@ class U2RisolaListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         user = self.request.user
-        queryset = super().get_queryset()
-
+        # Optimize queryset with select_related and only
+        queryset = Risola.objects.select_related('branch', 'user').only(
+            'id', 'title', 'author', 'institution_name', 'degree', 'created_at',
+            'branch__id', 'branch__name', 'user__id', 'user__username'
+        )
         search_query = self.request.GET.get('search', '').strip()
 
         if user.role == 'user2':
@@ -1195,21 +1190,17 @@ class U2RisolaListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Risolalar Roʻyxati'
         context['search_query'] = self.request.GET.get('search', '')
-
-        # Sahifalashni qo‘lda tekshirish
-        risolalar = self.get_queryset()
-        page = self.request.GET.get('page')
-        paginator = Paginator(risolalar, self.paginate_by)
-
-        try:
-            risolalar = paginator.page(page)
-        except PageNotAnInteger:
-            risolalar = paginator.page(1)
-        except EmptyPage:
-            risolalar = paginator.page(paginator.num_pages)
-
-        context['risolalar'] = risolalar
+        paginator = context['paginator']
+        page_obj = context['page_obj']
+        context['page_range'] = self.get_custom_page_range(paginator, page_obj)
         return context
+
+    def get_custom_page_range(self, paginator, page_obj, adjacent_pages=3):
+        current_page = page_obj.number
+        total_pages = paginator.num_pages
+        start_page = max(1, current_page - adjacent_pages)
+        end_page = min(total_pages, current_page + adjacent_pages)
+        return range(start_page, end_page + 1)
 
 
 class U2RisolaDetailView(LoginRequiredMixin, DetailView):
@@ -1242,8 +1233,11 @@ class U2DarslikListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         user = self.request.user
-        queryset = super().get_queryset()
-
+        # Optimize queryset with select_related and only
+        queryset = Darslik.objects.select_related('branch', 'user').only(
+            'id', 'title', 'author', 'institution_name', 'degree', 'created_at',
+            'branch__id', 'branch__name', 'user__id', 'user__username'
+        )
         search_query = self.request.GET.get('search', '').strip()
 
         if user.role == 'user2':
@@ -1264,21 +1258,17 @@ class U2DarslikListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Darsliklar Roʻyxati'
         context['search_query'] = self.request.GET.get('search', '')
-
-        # Sahifalashni qo‘lda qo‘shish
-        darsliklar = self.get_queryset()
-        page = self.request.GET.get('page')
-        paginator = Paginator(darsliklar, self.paginate_by)
-
-        try:
-            darsliklar = paginator.page(page)
-        except PageNotAnInteger:
-            darsliklar = paginator.page(1)
-        except EmptyPage:
-            darsliklar = paginator.page(paginator.num_pages)
-
-        context['darsliklar'] = darsliklar
+        paginator = context['paginator']
+        page_obj = context['page_obj']
+        context['page_range'] = self.get_custom_page_range(paginator, page_obj)
         return context
+
+    def get_custom_page_range(self, paginator, page_obj, adjacent_pages=3):
+        current_page = page_obj.number
+        total_pages = paginator.num_pages
+        start_page = max(1, current_page - adjacent_pages)
+        end_page = min(total_pages, current_page + adjacent_pages)
+        return range(start_page, end_page + 1)
 
 
 class U2DarslikDetailView(LoginRequiredMixin, DetailView):
@@ -1304,15 +1294,18 @@ class U2DarslikDetailView(LoginRequiredMixin, DetailView):
 
 
 class U2QollanmaListView(LoginRequiredMixin, ListView):
-    model = Qollanma  # Model o'zgartirildi
-    template_name = 'kategoriya/users/Qollanmalar/u2_qollanmalar.html'  # Template yo‘li moslashtirildi
+    model = Qollanma
+    template_name = 'kategoriya/users/Qollanmalar/u2_qollanmalar.html'
     context_object_name = 'qollanmalar'
     paginate_by = 8
 
     def get_queryset(self):
         user = self.request.user
-        queryset = super().get_queryset()
-
+        # Optimize queryset with select_related and only
+        queryset = Qollanma.objects.select_related('branch', 'user').only(
+            'id', 'title', 'author', 'institution_name', 'degree', 'created_at',
+            'branch__id', 'branch__name', 'user__id', 'user__username'
+        )
         search_query = self.request.GET.get('search', '').strip()
 
         if user.role == 'user2':
@@ -1333,21 +1326,17 @@ class U2QollanmaListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Qo‘llanmalar Roʻyxati'
         context['search_query'] = self.request.GET.get('search', '')
-
-        # Sahifalashni qo‘lda qo‘shish
-        qollanmalar = self.get_queryset()
-        page = self.request.GET.get('page')
-        paginator = Paginator(qollanmalar, self.paginate_by)
-
-        try:
-            qollanmalar = paginator.page(page)
-        except PageNotAnInteger:
-            qollanmalar = paginator.page(1)
-        except EmptyPage:
-            qollanmalar = paginator.page(paginator.num_pages)
-
-        context['qollanmalar'] = qollanmalar
+        paginator = context['paginator']
+        page_obj = context['page_obj']
+        context['page_range'] = self.get_custom_page_range(paginator, page_obj)
         return context
+
+    def get_custom_page_range(self, paginator, page_obj, adjacent_pages=3):
+        current_page = page_obj.number
+        total_pages = paginator.num_pages
+        start_page = max(1, current_page - adjacent_pages)
+        end_page = min(total_pages, current_page + adjacent_pages)
+        return range(start_page, end_page + 1)
 
 
 class U2QollanmaDetailView(LoginRequiredMixin, DetailView):
@@ -1373,15 +1362,18 @@ class U2QollanmaDetailView(LoginRequiredMixin, DetailView):
 
 
 class U2LoyihaListView(LoginRequiredMixin, ListView):
-    model = Loyiha  # Qollanma o‘rniga Loyiha modeli
-    template_name = 'kategoriya/users/Loyihalar/u2_loyihalar.html'  # Template yo‘li moslashtirildi
+    model = Loyiha
+    template_name = 'kategoriya/users/Loyihalar/u2_loyihalar.html'
     context_object_name = 'loyihalar'
-    paginate_by = 8  # Sahifalash uchun
+    paginate_by = 8
 
     def get_queryset(self):
         user = self.request.user
-        queryset = super().get_queryset()
-
+        # Optimize queryset with select_related and only
+        queryset = Loyiha.objects.select_related('branch', 'user').only(
+            'id', 'title', 'author', 'institution_name', 'degree', 'created_at',
+            'branch__id', 'branch__name', 'user__id', 'user__username'
+        )
         search_query = self.request.GET.get('search', '').strip()
 
         if user.role == 'user2':
@@ -1402,21 +1394,17 @@ class U2LoyihaListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Loyihalar Roʻyxati'
         context['search_query'] = self.request.GET.get('search', '')
-
-        # Sahifalashni qo‘lda qo‘shish
-        loyihalar = self.get_queryset()
-        page = self.request.GET.get('page')
-        paginator = Paginator(loyihalar, self.paginate_by)
-
-        try:
-            loyihalar = paginator.page(page)
-        except PageNotAnInteger:
-            loyihalar = paginator.page(1)
-        except EmptyPage:
-            loyihalar = paginator.page(paginator.num_pages)
-
-        context['loyihalar'] = loyihalar
+        paginator = context['paginator']
+        page_obj = context['page_obj']
+        context['page_range'] = self.get_custom_page_range(paginator, page_obj)
         return context
+
+    def get_custom_page_range(self, paginator, page_obj, adjacent_pages=3):
+        current_page = page_obj.number
+        total_pages = paginator.num_pages
+        start_page = max(1, current_page - adjacent_pages)
+        end_page = min(total_pages, current_page + adjacent_pages)
+        return range(start_page, end_page + 1)
 
 
 class U2LoyihaDetailView(LoginRequiredMixin, DetailView):
@@ -1442,15 +1430,18 @@ class U2LoyihaDetailView(LoginRequiredMixin, DetailView):
 
 
 class U2JurnalListView(LoginRequiredMixin, ListView):
-    model = Jurnal  # Loyiha o‘rniga Jurnal modeli
-    template_name = 'kategoriya/users/Jurnallar/u2_jurnallar.html'  # Template yo‘li moslashtirildi
+    model = Jurnal
+    template_name = 'kategoriya/users/Jurnallar/u2_jurnallar.html'
     context_object_name = 'jurnallar'
     paginate_by = 8
 
     def get_queryset(self):
         user = self.request.user
-        queryset = super().get_queryset()
-
+        # Optimize queryset with select_related and only
+        queryset = Jurnal.objects.select_related('branch', 'user').only(
+            'id', 'title', 'author', 'institution_name', 'degree', 'created_at',
+            'branch__id', 'branch__name', 'user__id', 'user__username'
+        )
         search_query = self.request.GET.get('search', '').strip()
 
         if user.role == 'user2':
@@ -1471,21 +1462,17 @@ class U2JurnalListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Jurnallar Roʻyxati'
         context['search_query'] = self.request.GET.get('search', '')
-
-        # Sahifalashni qo‘lda qo‘shish
-        jurnallar = self.get_queryset()
-        page = self.request.GET.get('page')
-        paginator = Paginator(jurnallar, self.paginate_by)
-
-        try:
-            jurnallar = paginator.page(page)
-        except PageNotAnInteger:
-            jurnallar = paginator.page(1)
-        except EmptyPage:
-            jurnallar = paginator.page(paginator.num_pages)
-
-        context['jurnallar'] = jurnallar
+        paginator = context['paginator']
+        page_obj = context['page_obj']
+        context['page_range'] = self.get_custom_page_range(paginator, page_obj)
         return context
+
+    def get_custom_page_range(self, paginator, page_obj, adjacent_pages=3):
+        current_page = page_obj.number
+        total_pages = paginator.num_pages
+        start_page = max(1, current_page - adjacent_pages)
+        end_page = min(total_pages, current_page + adjacent_pages)
+        return range(start_page, end_page + 1)
 
 
 class U2JurnalDetailView(LoginRequiredMixin, DetailView):
@@ -1511,15 +1498,18 @@ class U2JurnalDetailView(LoginRequiredMixin, DetailView):
 
 
 class U2MaqolaListView(LoginRequiredMixin, ListView):
-    model = Maqola  # Jurnal o‘rniga Maqola modeli
-    template_name = 'kategoriya/users/Maqolalar/u2_maqolalar.html'  # Template yo‘li moslashtirildi
+    model = Maqola
+    template_name = 'kategoriya/users/Maqolalar/u2_maqolalar.html'
     context_object_name = 'maqolalar'
     paginate_by = 8
 
     def get_queryset(self):
         user = self.request.user
-        queryset = super().get_queryset()
-
+        # Optimize queryset with select_related and only
+        queryset = Maqola.objects.select_related('branch', 'user').only(
+            'id', 'title', 'author', 'institution_name', 'degree', 'created_at',
+            'branch__id', 'branch__name', 'user__id', 'user__username'
+        )
         search_query = self.request.GET.get('search', '').strip()
 
         if user.role == 'user2':
@@ -1540,21 +1530,17 @@ class U2MaqolaListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Maqolalar Roʻyxati'
         context['search_query'] = self.request.GET.get('search', '')
-
-        # Sahifalashni qo‘lda qo‘shish
-        maqolalar = self.get_queryset()
-        page = self.request.GET.get('page')
-        paginator = Paginator(maqolalar, self.paginate_by)
-
-        try:
-            maqolalar = paginator.page(page)
-        except PageNotAnInteger:
-            maqolalar = paginator.page(1)
-        except EmptyPage:
-            maqolalar = paginator.page(paginator.num_pages)
-
-        context['maqolalar'] = maqolalar
+        paginator = context['paginator']
+        page_obj = context['page_obj']
+        context['page_range'] = self.get_custom_page_range(paginator, page_obj)
         return context
+
+    def get_custom_page_range(self, paginator, page_obj, adjacent_pages=3):
+        current_page = page_obj.number
+        total_pages = paginator.num_pages
+        start_page = max(1, current_page - adjacent_pages)
+        end_page = min(total_pages, current_page + adjacent_pages)
+        return range(start_page, end_page + 1)
 
 
 class U2MaqolaDetailView(LoginRequiredMixin, DetailView):
@@ -1580,15 +1566,18 @@ class U2MaqolaDetailView(LoginRequiredMixin, DetailView):
 
 
 class U2TajribaListView(LoginRequiredMixin, ListView):
-    model = Xorijiy_Tajriba  # Maqola o‘rniga Tajriba modeli
-    template_name = 'kategoriya/users/Xorijiy_Tajribalar/u2_tajribalar.html'  # Template yo‘li moslashtirildi
+    model = Xorijiy_Tajriba
+    template_name = 'kategoriya/users/Xorijiy_Tajribalar/u2_tajribalar.html'
     context_object_name = 'tajribalar'
     paginate_by = 8
 
     def get_queryset(self):
         user = self.request.user
-        queryset = super().get_queryset()
-
+        # Optimize queryset with select_related and only
+        queryset = Xorijiy_Tajriba.objects.select_related('branch', 'user').only(
+            'id', 'title', 'author', 'institution_name', 'degree', 'created_at',
+            'branch__id', 'branch__name', 'user__id', 'user__username'
+        )
         search_query = self.request.GET.get('search', '').strip()
 
         if user.role == 'user2':
@@ -1609,21 +1598,17 @@ class U2TajribaListView(LoginRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Tajribalar Roʻyxati'
         context['search_query'] = self.request.GET.get('search', '')
-
-        # Sahifalashni qo‘lda qo‘shish
-        tajribalar = self.get_queryset()
-        page = self.request.GET.get('page')
-        paginator = Paginator(tajribalar, self.paginate_by)
-
-        try:
-            tajribalar = paginator.page(page)
-        except PageNotAnInteger:
-            tajribalar = paginator.page(1)
-        except EmptyPage:
-            tajribalar = paginator.page(paginator.num_pages)
-
-        context['tajribalar'] = tajribalar
+        paginator = context['paginator']
+        page_obj = context['page_obj']
+        context['page_range'] = self.get_custom_page_range(paginator, page_obj)
         return context
+
+    def get_custom_page_range(self, paginator, page_obj, adjacent_pages=3):
+        current_page = page_obj.number
+        total_pages = paginator.num_pages
+        start_page = max(1, current_page - adjacent_pages)
+        end_page = min(total_pages, current_page + adjacent_pages)
+        return range(start_page, end_page + 1)
 
 
 class U2TajribaDetailView(LoginRequiredMixin, DetailView):
@@ -1649,15 +1634,18 @@ class U2TajribaDetailView(LoginRequiredMixin, DetailView):
 
 
 class U2OtherListView(LoginRequiredMixin, ListView):
-    model = Other  # Other modeli
-    template_name = 'kategoriya/users/Boshqalar/u2_otherlar.html'  # Template yo‘li moslashtirildi
-    context_object_name = 'otherlar'  # TO'G'RILANDI
+    model = Other
+    template_name = 'kategoriya/users/Boshqalar/u2_otherlar.html'
+    context_object_name = 'otherlar'
     paginate_by = 8
 
     def get_queryset(self):
         user = self.request.user
-        queryset = super().get_queryset()
-
+        # Optimize queryset with select_related and only
+        queryset = Other.objects.select_related('branch', 'user').only(
+            'id', 'title', 'author', 'institution_name', 'degree', 'created_at',
+            'branch__id', 'branch__name', 'user__id', 'user__username'
+        )
         search_query = self.request.GET.get('search', '').strip()
 
         if user.role == 'user2':
@@ -1676,23 +1664,19 @@ class U2OtherListView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Other Roʻyxati'
+        context['title'] = 'Boshqalar Roʻyxati'  # More appropriate title in Uzbek
         context['search_query'] = self.request.GET.get('search', '')
-
-        # Sahifalashni qo‘lda qo‘shish
-        otherlar = self.get_queryset()
-        page = self.request.GET.get('page')
-        paginator = Paginator(otherlar, self.paginate_by)
-
-        try:
-            otherlar = paginator.page(page)
-        except PageNotAnInteger:
-            otherlar = paginator.page(1)
-        except EmptyPage:
-            otherlar = paginator.page(paginator.num_pages)
-
-        context['otherlar'] = otherlar  # TO'G'RILANDI
+        paginator = context['paginator']
+        page_obj = context['page_obj']
+        context['page_range'] = self.get_custom_page_range(paginator, page_obj)
         return context
+
+    def get_custom_page_range(self, paginator, page_obj, adjacent_pages=3):
+        current_page = page_obj.number
+        total_pages = paginator.num_pages
+        start_page = max(1, current_page - adjacent_pages)
+        end_page = min(total_pages, current_page + adjacent_pages)
+        return range(start_page, end_page + 1)
 
 
 class U2OtherDetailView(LoginRequiredMixin, DetailView):
@@ -2085,7 +2069,7 @@ def m_monografiya_list(request):
         Monografiya,
         MonografiyaForm,
         'kategoriya/moderator/m_monografiya.html',
-        limit_default=10,
+        limit_default=8,
         search_fields=['title', 'author', 'institution_name'],
         user=request.user,
         moderator_filter=True  # Moderator uchun filial bo‘yicha filtr
@@ -2124,7 +2108,7 @@ def u1_monografiya_list(request):
     pagination_data = paginate_and_filter(
         request,
         queryset,
-        limit_default=10,  # Har sahifada 10 ta element
+        limit_default=8,  # Har sahifada 10 ta element
         search_fields=['title', 'author', 'institution_name']
     )
     form = MonografiyaForm(user=request.user)
@@ -2193,30 +2177,143 @@ def m_monografiya_delete(request, monografiya_id):
 # Risola
 @csrf_exempt
 def risola_list(request):
-    return resource_list(
-        request, Risola, RisolaForm, 'kategoriya/admin/Kitob_Risola.html',
-        search_fields=['title', 'author', 'institution_name']
+    # Success message handling via session
+    success_message = request.session.pop('success_message', None) if request.method == 'GET' else None
+
+    # Optimized queryset with select_related if there are any relationships
+    queryset = Risola.objects.all()  # Add select_related if Risola has foreign keys
+
+    # Resource list with pagination and filtering
+    response = resource_list(
+        request,
+        Risola,
+        RisolaForm,
+        'kategoriya/admin/Kitob_Risola.html',
+        limit_default=8,  # 8 items per page
+        search_fields=['title', 'author', 'institution_name'],
+        user=request.user
     )
 
+    # Cache implementation
+    cache_key = f"risola_list_{request.user.id}_{request.GET.get('page', 1)}_{request.GET.get('search', '')}"
+    cached_response = cache.get(cache_key)
+    if cached_response:
+        if success_message:
+            return render(request, 'kategoriya/admin/Kitob_Risola.html', {
+                'risolalar': response.context_data['risolalar'],  # Adjust context key based on your template
+                'success_message': success_message,
+                'search_query': request.GET.get('search', '')
+            })
+        return cached_response
 
-@role_required('moderator')
-@csrf_exempt
+    # Cache the response for 5 minutes
+    # cache.set(cache_key, response, timeout=300)
+
+    # Add success message to response if it exists
+    if success_message:
+        response.context_data['success_message'] = success_message
+
+    return response
+
+
+@role_required('moderator')  # Faqat moderatorlar kira oladi
+@csrf_exempt  # CSRF tekshiruvini o‘chiradi
 def m_risola_list(request):
+    # Moderatorning filiali borligini tekshirish
     if not request.user.branch:
-        return HttpResponseForbidden("Moderator uchun branch belgilanmagan.")
-    return resource_list(
-        request, Risola, RisolaForm, 'kategoriya/moderator/m_Kitob_Risola.html',
-        search_fields=['title', 'author', 'institution_name'], user=request.user, moderator_filter=True
+        return HttpResponseForbidden("Moderator uchun filial belgilanmagan.")
+
+    # Sessiyadan muvaffaqiyat xabarini olish va o‘chirish
+    success_message = request.session.pop('success_message', None) if request.method == 'GET' else None
+
+    # Kesh kalitini yaratish
+    cache_key = f"m_risola_list_{request.user.id}_{request.GET.get('page', 1)}_{request.GET.get('search', '')}"
+    cached_response = cache.get(cache_key)
+
+    # Agar keshda ma’lumot bo‘lsa, uni qaytarish
+    if cached_response:
+        # Agar keshlangan javobda context_data mavjud bo‘lsa va success_message qo‘shilsa
+        if hasattr(cached_response, 'context_data'):
+            context = cached_response.context_data
+            if success_message:
+                context['success_message'] = success_message
+            return render(request, 'kategoriya/moderator/m_Kitob_Risola.html', context)
+        return cached_response  # Agar context_data yo‘q bo‘lsa, to‘g‘ridan-to‘g‘ri qaytariladi
+
+    # resource_list dan natijani olish
+    response = resource_list(
+        request,
+        Risola,
+        RisolaForm,
+        'kategoriya/moderator/m_Kitob_Risola.html',
+        limit_default=10,
+        search_fields=['title', 'author', 'institution_name'],
+        user=request.user,
+        moderator_filter=True  # Moderator uchun filial bo‘yicha filtr
     )
+
+    # Agar success_message bo‘lsa, uni context_data ga qo‘shib qayta render qilamiz
+    if success_message and hasattr(response, 'context_data'):
+        response.context_data['success_message'] = success_message
+        cache.set(cache_key, response, timeout=300)  # Yangilangan javobni keshga saqlash
+        return render(request, 'kategoriya/moderator/m_Kitob_Risola.html', response.context_data)
+
+    # Keshga saqlash (faqat response.context_data mavjud bo‘lsa)
+    if hasattr(response, 'context_data'):
+        cache.set(cache_key, response, timeout=300)
+
+    return response
 
 
 @role_required('moderator', 'administrator', 'user1', 'user2', 'user3')
 @csrf_exempt
 def u1_risola_list(request):
-    return resource_list(
-        request, Risola, RisolaForm, 'kategoriya/users/Kitob va Risola/u1_risolalar.html',
-        limit_default=8, search_fields=['title', 'author', 'institution_name'], user=request.user, moderator_filter=True
+    # Kesh kaliti
+    cache_key = f"u1_risola_list_{request.user.id}_{request.GET.get('page', 1)}_{request.GET.get('search', '')}"
+    cached_data = cache.get(cache_key)
+    if cached_data:
+        return cached_data
+
+    # Queryset tayyorlash
+    queryset = Risola.objects.all()
+    if request.user.role == 'moderator' and request.user.branch:
+        queryset = queryset.filter(branch=request.user.branch)
+
+    # Pagination va filtr
+    pagination_data = paginate_and_filter(
+        request,
+        queryset,
+        limit_default=8,  # Har sahifada 8 ta element
+        search_fields=['title', 'author', 'institution_name']
     )
+    form = RisolaForm(user=request.user)
+
+    # POST so'rovni qayta ishlash
+    if request.method == "POST":
+        form = RisolaForm(request.POST, request.FILES, user=request.user)
+        if form.is_valid():
+            instance = form.save(commit=False)
+            instance.user = request.user
+            instance.save()
+            request.session['success'] = "Risola muvaffaqiyatli qo‘shildi!"
+            return redirect(request.path_info)
+
+    # Kontekst tayyorlash
+    context = {
+        "risolalar": pagination_data["items"],
+        "branches": Branch.objects.filter(
+            id=request.user.branch.id) if request.user.role == 'moderator' and request.user.branch else Branch.objects.all(),
+        "success_message": request.session.pop('success', None),
+        "form": form,
+        "total_pages": pagination_data["total_pages"],
+        "search_query": pagination_data["search_query"],
+        "paginator": pagination_data["paginator"],
+    }
+    response = render(request, 'kategoriya/users/Kitob va Risola/u1_risolalar.html', context)
+
+    # Keshga saqlash
+    cache.set(cache_key, response, timeout=300)
+    return response
 
 
 def u1_risola_detail(request, risola_id):
@@ -2257,30 +2354,143 @@ def m_risola_delete(request, risola_id):
 # Darslik
 @csrf_exempt
 def darslik_list(request):
-    return resource_list(
-        request, Darslik, DarslikForm, 'kategoriya/admin/Darslik.html',
-        search_fields=['title', 'author', 'institution_name']
+    # Success message handling via session
+    success_message = request.session.pop('success_message', None) if request.method == 'GET' else None
+
+    # Optimized queryset (add select_related if Darslik has foreign keys)
+    queryset = Darslik.objects.all()  # Add select_related if there are relationships
+
+    # Resource list with pagination and filtering
+    response = resource_list(
+        request,
+        Darslik,
+        DarslikForm,
+        'kategoriya/admin/Darslik.html',
+        limit_default=8,  # 8 items per page
+        search_fields=['title', 'author', 'institution_name'],
+        user=request.user
     )
 
+    # Cache implementation
+    cache_key = f"darslik_list_{request.user.id}_{request.GET.get('page', 1)}_{request.GET.get('search', '')}"
+    cached_response = cache.get(cache_key)
+    if cached_response:
+        if success_message:
+            return render(request, 'kategoriya/admin/Darslik.html', {
+                'darsliklar': response.context_data['darsliklar'],  # Adjust context key based on your template
+                'success_message': success_message,
+                'search_query': request.GET.get('search', '')
+            })
+        return cached_response
 
-@role_required('moderator')
-@csrf_exempt
+    # Cache the response for 5 minutes
+    # cache.set(cache_key, response, timeout=300)
+
+    # Add success message to response if it exists
+    if success_message:
+        response.context_data['success_message'] = success_message
+
+    return response
+
+
+@role_required('moderator')  # Faqat moderatorlar kira oladi
+@csrf_exempt  # CSRF tekshiruvini o‘chiradi
 def m_darslik_list(request):
+    # Moderatorning filiali borligini tekshirish
     if not request.user.branch:
-        return HttpResponseForbidden("Moderator uchun branch belgilanmagan.")
-    return resource_list(
-        request, Darslik, DarslikForm, 'kategoriya/moderator/m_Darslik.html',
-        search_fields=['title', 'author', 'institution_name'], user=request.user, moderator_filter=True
+        return HttpResponseForbidden("Moderator uchun filial belgilanmagan.")
+
+    # Sessiyadan muvaffaqiyat xabarini olish va o‘chirish
+    success_message = request.session.pop('success_message', None) if request.method == 'GET' else None
+
+    # Kesh kalitini yaratish
+    cache_key = f"m_darslik_list_{request.user.id}_{request.GET.get('page', 1)}_{request.GET.get('search', '')}"
+    cached_response = cache.get(cache_key)
+
+    # Agar keshda ma’lumot bo‘lsa, uni qaytarish
+    if cached_response:
+        # Agar keshlangan javobda context_data mavjud bo‘lsa va success_message qo‘shilsa
+        if hasattr(cached_response, 'context_data'):
+            context = cached_response.context_data
+            if success_message:
+                context['success_message'] = success_message
+            return render(request, 'kategoriya/moderator/m_Darslik.html', context)
+        return cached_response  # Agar context_data yo‘q bo‘lsa, to‘g‘ridan-to‘g‘ri qaytariladi
+
+    # resource_list dan natijani olish
+    response = resource_list(
+        request,
+        Darslik,
+        DarslikForm,
+        'kategoriya/moderator/m_Darslik.html',
+        limit_default=10,
+        search_fields=['title', 'author', 'institution_name'],
+        user=request.user,
+        moderator_filter=True  # Moderator uchun filial bo‘yicha filtr
     )
+
+    # Agar success_message bo‘lsa, uni context_data ga qo‘shib qayta render qilamiz
+    if success_message and hasattr(response, 'context_data'):
+        response.context_data['success_message'] = success_message
+        cache.set(cache_key, response, timeout=300)  # Yangilangan javobni keshga saqlash
+        return render(request, 'kategoriya/moderator/m_Darslik.html', response.context_data)
+
+    # Keshga saqlash (faqat response.context_data mavjud bo‘lsa)
+    if hasattr(response, 'context_data'):
+        cache.set(cache_key, response, timeout=300)
+
+    return response
 
 
 @role_required('moderator', 'administrator', 'user1', 'user2', 'user3')
 @csrf_exempt
 def u1_darslik_list(request):
-    return resource_list(
-        request, Darslik, DarslikForm, 'kategoriya/users/Darsliklar/u1_darsliklar.html',
-        limit_default=8, search_fields=['title', 'author', 'institution_name'], user=request.user, moderator_filter=True
+    # Kesh kaliti
+    cache_key = f"u1_darslik_list_{request.user.id}_{request.GET.get('page', 1)}_{request.GET.get('search', '')}"
+    cached_data = cache.get(cache_key)
+    if cached_data:
+        return cached_data
+
+    # Queryset tayyorlash
+    queryset = Darslik.objects.all()
+    if request.user.role == 'moderator' and request.user.branch:
+        queryset = queryset.filter(branch=request.user.branch)
+
+    # Pagination va filtr
+    pagination_data = paginate_and_filter(
+        request,
+        queryset,
+        limit_default=8,  # Har sahifada 8 ta element
+        search_fields=['title', 'author', 'institution_name']
     )
+    form = DarslikForm(user=request.user)
+
+    # POST so'rovni qayta ishlash
+    if request.method == "POST":
+        form = DarslikForm(request.POST, request.FILES, user=request.user)
+        if form.is_valid():
+            instance = form.save(commit=False)
+            instance.user = request.user
+            instance.save()
+            request.session['success'] = "Darslik muvaffaqiyatli qo‘shildi!"
+            return redirect(request.path_info)
+
+    # Kontekst tayyorlash
+    context = {
+        "darsliklar": pagination_data["items"],
+        "branches": Branch.objects.filter(
+            id=request.user.branch.id) if request.user.role == 'moderator' and request.user.branch else Branch.objects.all(),
+        "success_message": request.session.pop('success', None),
+        "form": form,
+        "total_pages": pagination_data["total_pages"],
+        "search_query": pagination_data["search_query"],
+        "paginator": pagination_data["paginator"],
+    }
+    response = render(request, 'kategoriya/users/Darsliklar/u1_darsliklar.html', context)
+
+    # Keshga saqlash
+    cache.set(cache_key, response, timeout=300)
+    return response
 
 
 def u1_darslik_detail(request, darslik_id):
@@ -2321,30 +2531,143 @@ def m_darslik_delete(request, darslik_id):
 # Qollanma
 @csrf_exempt
 def qollanma_list(request):
-    return resource_list(
-        request, Qollanma, QollanmaForm, 'kategoriya/admin/Qollanma.html',
-        search_fields=['title', 'author', 'institution_name']
+    # Success message handling via session
+    success_message = request.session.pop('success_message', None) if request.method == 'GET' else None
+
+    # Optimized queryset (add select_related if Qollanma has foreign keys)
+    queryset = Qollanma.objects.all()  # Add select_related if there are relationships
+
+    # Resource list with pagination and filtering
+    response = resource_list(
+        request,
+        Qollanma,
+        QollanmaForm,
+        'kategoriya/admin/Qollanma.html',
+        limit_default=8,  # 8 items per page
+        search_fields=['title', 'author', 'institution_name'],
+        user=request.user
     )
 
+    # Cache implementation
+    cache_key = f"qollanma_list_{request.user.id}_{request.GET.get('page', 1)}_{request.GET.get('search', '')}"
+    cached_response = cache.get(cache_key)
+    if cached_response:
+        if success_message:
+            return render(request, 'kategoriya/admin/Qollanma.html', {
+                'qollanmalar': response.context_data['qollanmalar'],  # Adjust context key based on your template
+                'success_message': success_message,
+                'search_query': request.GET.get('search', '')
+            })
+        return cached_response
 
-@role_required('moderator', 'administrator')
-@csrf_exempt
+    # Cache the response for 5 minutes
+    # cache.set(cache_key, response, timeout=300)
+
+    # Add success message to response if it exists
+    if success_message:
+        response.context_data['success_message'] = success_message
+
+    return response
+
+
+@role_required('moderator', 'administrator')  # Moderator va administratorlar kira oladi
+@csrf_exempt  # CSRF tekshiruvini o‘chiradi
 def m_qollanma_list(request):
+    # Moderator uchun filial borligini tekshirish (administrator uchun shart emas)
     if request.user.role == 'moderator' and not request.user.branch:
-        return HttpResponseForbidden("Moderator uchun branch belgilanmagan.")
-    return resource_list(
-        request, Qollanma, QollanmaForm, 'kategoriya/moderator/m_Qollanma.html',
-        search_fields=['title', 'author', 'institution_name'], user=request.user, moderator_filter=True
+        return HttpResponseForbidden("Moderator uchun filial belgilanmagan.")
+
+    # Sessiyadan muvaffaqiyat xabarini olish va o‘chirish
+    success_message = request.session.pop('success_message', None) if request.method == 'GET' else None
+
+    # Kesh kalitini yaratish
+    cache_key = f"m_qollanma_list_{request.user.id}_{request.GET.get('page', 1)}_{request.GET.get('search', '')}"
+    cached_response = cache.get(cache_key)
+
+    # Agar keshda ma’lumot bo‘lsa, uni qaytarish
+    if cached_response:
+        # Agar keshlangan javobda context_data mavjud bo‘lsa va success_message qo‘shilsa
+        if hasattr(cached_response, 'context_data'):
+            context = cached_response.context_data
+            if success_message:
+                context['success_message'] = success_message
+            return render(request, 'kategoriya/moderator/m_Qollanma.html', context)
+        return cached_response  # Agar context_data yo‘q bo‘lsa, to‘g‘ridan-to‘g‘ri qaytariladi
+
+    # resource_list dan natijani olish
+    response = resource_list(
+        request,
+        Qollanma,
+        QollanmaForm,
+        'kategoriya/moderator/m_Qollanma.html',
+        limit_default=10,
+        search_fields=['title', 'author', 'institution_name'],
+        user=request.user,
+        moderator_filter=True  # Moderator uchun filial bo‘yicha filtr
     )
+
+    # Agar success_message bo‘lsa, uni context_data ga qo‘shib qayta render qilamiz
+    if success_message and hasattr(response, 'context_data'):
+        response.context_data['success_message'] = success_message
+        cache.set(cache_key, response, timeout=300)  # Yangilangan javobni keshga saqlash
+        return render(request, 'kategoriya/moderator/m_Qollanma.html', response.context_data)
+
+    # Keshga saqlash (faqat response.context_data mavjud bo‘lsa)
+    if hasattr(response, 'context_data'):
+        cache.set(cache_key, response, timeout=300)
+
+    return response
 
 
 @role_required('moderator', 'administrator', 'user1', 'user2', 'user3')
 @csrf_exempt
 def u1_qollanma_list(request):
-    return resource_list(
-        request, Qollanma, QollanmaForm, 'kategoriya/users/Qollanmalar/u1_qollanmalar.html',
-        limit_default=8, search_fields=['title', 'author', 'institution_name'], user=request.user, moderator_filter=True
+    # Kesh kaliti
+    cache_key = f"u1_qollanma_list_{request.user.id}_{request.GET.get('page', 1)}_{request.GET.get('search', '')}"
+    cached_data = cache.get(cache_key)
+    if cached_data:
+        return cached_data
+
+    # Queryset tayyorlash
+    queryset = Qollanma.objects.all()
+    if request.user.role == 'moderator' and request.user.branch:
+        queryset = queryset.filter(branch=request.user.branch)
+
+    # Pagination va filtr
+    pagination_data = paginate_and_filter(
+        request,
+        queryset,
+        limit_default=8,  # Har sahifada 8 ta element
+        search_fields=['title', 'author', 'institution_name']
     )
+    form = QollanmaForm(user=request.user)
+
+    # POST so'rovni qayta ishlash
+    if request.method == "POST":
+        form = QollanmaForm(request.POST, request.FILES, user=request.user)
+        if form.is_valid():
+            instance = form.save(commit=False)
+            instance.user = request.user
+            instance.save()
+            request.session['success'] = "Qo‘llanma muvaffaqiyatli qo‘shildi!"
+            return redirect(request.path_info)
+
+    # Kontekst tayyorlash
+    context = {
+        "qollanmalar": pagination_data["items"],
+        "branches": Branch.objects.filter(
+            id=request.user.branch.id) if request.user.role == 'moderator' and request.user.branch else Branch.objects.all(),
+        "success_message": request.session.pop('success', None),
+        "form": form,
+        "total_pages": pagination_data["total_pages"],
+        "search_query": pagination_data["search_query"],
+        "paginator": pagination_data["paginator"],
+    }
+    response = render(request, 'kategoriya/users/Qollanmalar/u1_qollanmalar.html', context)
+
+    # Keshga saqlash
+    cache.set(cache_key, response, timeout=300)
+    return response
 
 
 def u1_qollanma_detail(request, qollanma_id):
@@ -2385,30 +2708,143 @@ def m_qollanma_delete(request, qollanma_id):
 # Loyiha
 @csrf_exempt
 def loyiha_list(request):
-    return resource_list(
-        request, Loyiha, LoyihaForm, 'kategoriya/admin/Ilmiy Loyiha.html',
-        search_fields=['title', 'description']
+    # Success message handling via session
+    success_message = request.session.pop('success_message', None) if request.method == 'GET' else None
+
+    # Optimized queryset (add select_related if Loyiha has foreign keys)
+    queryset = Loyiha.objects.all()  # Add select_related if there are relationships
+
+    # Resource list with pagination and filtering
+    response = resource_list(
+        request,
+        Loyiha,
+        LoyihaForm,
+        'kategoriya/admin/Ilmiy Loyiha.html',
+        limit_default=8,  # 8 items per page
+        search_fields=['title', 'description'],
+        user=request.user
     )
 
+    # Cache implementation
+    cache_key = f"loyiha_list_{request.user.id}_{request.GET.get('page', 1)}_{request.GET.get('search', '')}"
+    cached_response = cache.get(cache_key)
+    if cached_response:
+        if success_message:
+            return render(request, 'kategoriya/admin/Ilmiy Loyiha.html', {
+                'loyihalar': response.context_data['loyihalar'],  # Adjust context key based on your template
+                'success_message': success_message,
+                'search_query': request.GET.get('search', '')
+            })
+        return cached_response
 
-@role_required('moderator', 'administrator')
-@csrf_exempt
+    # Cache the response for 5 minutes
+    # cache.set(cache_key, response, timeout=300)
+
+    # Add success message to response if it exists
+    if success_message:
+        response.context_data['success_message'] = success_message
+
+    return response
+
+
+@role_required('moderator', 'administrator')  # Moderator va administratorlar kira oladi
+@csrf_exempt  # CSRF tekshiruvini o‘chiradi
 def m_loyiha_list(request):
+    # Moderator uchun filial borligini tekshirish (administrator uchun shart emas)
     if request.user.role == 'moderator' and not request.user.branch:
-        return HttpResponseForbidden("Moderator uchun branch belgilanmagan.")
-    return resource_list(
-        request, Loyiha, LoyihaForm, 'kategoriya/moderator/m_Ilmiy Loyiha.html',
-        search_fields=['title', 'description'], user=request.user, moderator_filter=True
+        return HttpResponseForbidden("Moderator uchun filial belgilanmagan.")
+
+    # Sessiyadan muvaffaqiyat xabarini olish va o‘chirish
+    success_message = request.session.pop('success_message', None) if request.method == 'GET' else None
+
+    # Kesh kalitini yaratish
+    cache_key = f"m_loyiha_list_{request.user.id}_{request.GET.get('page', 1)}_{request.GET.get('search', '')}"
+    cached_response = cache.get(cache_key)
+
+    # Agar keshda ma’lumot bo‘lsa, uni qaytarish
+    if cached_response:
+        # Agar keshlangan javobda context_data mavjud bo‘lsa va success_message qo‘shilsa
+        if hasattr(cached_response, 'context_data'):
+            context = cached_response.context_data
+            if success_message:
+                context['success_message'] = success_message
+            return render(request, 'kategoriya/moderator/m_Ilmiy Loyiha.html', context)
+        return cached_response  # Agar context_data yo‘q bo‘lsa, to‘g‘ridan-to‘g‘ri qaytariladi
+
+    # resource_list dan natijani olish
+    response = resource_list(
+        request,
+        Loyiha,
+        LoyihaForm,
+        'kategoriya/moderator/m_Ilmiy Loyiha.html',
+        limit_default=10,
+        search_fields=['title', 'description'],
+        user=request.user,
+        moderator_filter=True  # Moderator uchun filial bo‘yicha filtr
     )
+
+    # Agar success_message bo‘lsa, uni context_data ga qo‘shib qayta render qilamiz
+    if success_message and hasattr(response, 'context_data'):
+        response.context_data['success_message'] = success_message
+        cache.set(cache_key, response, timeout=300)  # Yangilangan javobni keshga saqlash
+        return render(request, 'kategoriya/moderator/m_Ilmiy Loyiha.html', response.context_data)
+
+    # Keshga saqlash (faqat response.context_data mavjud bo‘lsa)
+    if hasattr(response, 'context_data'):
+        cache.set(cache_key, response, timeout=300)
+
+    return response
 
 
 @role_required('moderator', 'administrator', 'user1', 'user2', 'user3')
 @csrf_exempt
 def u1_loyiha_list(request):
-    return resource_list(
-        request, Loyiha, LoyihaForm, 'kategoriya/users/Loyihalar/u1_loyihalar.html',
-        limit_default=8, search_fields=['title', 'author', 'institution_name'], user=request.user, moderator_filter=True
+    # Kesh kaliti
+    cache_key = f"u1_loyiha_list_{request.user.id}_{request.GET.get('page', 1)}_{request.GET.get('search', '')}"
+    cached_data = cache.get(cache_key)
+    if cached_data:
+        return cached_data
+
+    # Queryset tayyorlash
+    queryset = Loyiha.objects.all()
+    if request.user.role == 'moderator' and request.user.branch:
+        queryset = queryset.filter(branch=request.user.branch)
+
+    # Pagination va filtr
+    pagination_data = paginate_and_filter(
+        request,
+        queryset,
+        limit_default=8,  # Har sahifada 8 ta element
+        search_fields=['title', 'author', 'institution_name']
     )
+    form = LoyihaForm(user=request.user)
+
+    # POST so'rovni qayta ishlash
+    if request.method == "POST":
+        form = LoyihaForm(request.POST, request.FILES, user=request.user)
+        if form.is_valid():
+            instance = form.save(commit=False)
+            instance.user = request.user
+            instance.save()
+            request.session['success'] = "Loyiha muvaffaqiyatli qo‘shildi!"
+            return redirect(request.path_info)
+
+    # Kontekst tayyorlash
+    context = {
+        "loyihalar": pagination_data["items"],
+        "branches": Branch.objects.filter(
+            id=request.user.branch.id) if request.user.role == 'moderator' and request.user.branch else Branch.objects.all(),
+        "success_message": request.session.pop('success', None),
+        "form": form,
+        "total_pages": pagination_data["total_pages"],
+        "search_query": pagination_data["search_query"],
+        "paginator": pagination_data["paginator"],
+    }
+    response = render(request, 'kategoriya/users/Loyihalar/u1_loyihalar.html', context)
+
+    # Keshga saqlash
+    cache.set(cache_key, response, timeout=300)
+    return response
 
 
 def u1_loyiha_detail(request, loyiha_id):
@@ -2449,30 +2885,143 @@ def m_loyiha_delete(request, loyiha_id):
 # Jurnal
 @csrf_exempt
 def jurnal_list(request):
-    return resource_list(
-        request, Jurnal, JurnalForm, 'kategoriya/admin/ilmiy Jurnallar.html',
-        search_fields=['title', 'author', 'institution_name']
+    # Success message handling via session
+    success_message = request.session.pop('success_message', None) if request.method == 'GET' else None
+
+    # Optimized queryset (add select_related if Jurnal has foreign keys)
+    queryset = Jurnal.objects.all()  # Add select_related if there are relationships
+
+    # Resource list with pagination and filtering
+    response = resource_list(
+        request,
+        Jurnal,
+        JurnalForm,
+        'kategoriya/admin/ilmiy Jurnallar.html',
+        limit_default=8,  # 8 items per page
+        search_fields=['title', 'author', 'institution_name'],
+        user=request.user
     )
 
+    # Cache implementation
+    cache_key = f"jurnal_list_{request.user.id}_{request.GET.get('page', 1)}_{request.GET.get('search', '')}"
+    cached_response = cache.get(cache_key)
+    if cached_response:
+        if success_message:
+            return render(request, 'kategoriya/admin/ilmiy Jurnallar.html', {
+                'jurnallar': response.context_data['jurnallar'],  # Adjust context key based on your template
+                'success_message': success_message,
+                'search_query': request.GET.get('search', '')
+            })
+        return cached_response
 
-@role_required('moderator', 'administrator')
-@csrf_exempt
+    # Cache the response for 5 minutes
+    # cache.set(cache_key, response, timeout=300)
+
+    # Add success message to response if it exists
+    if success_message:
+        response.context_data['success_message'] = success_message
+
+    return response
+
+
+@role_required('moderator', 'administrator')  # Moderator va administratorlar kira oladi
+@csrf_exempt  # CSRF tekshiruvini o‘chiradi
 def m_jurnal_list(request):
+    # Moderator uchun filial borligini tekshirish (administrator uchun shart emas)
     if request.user.role == 'moderator' and not request.user.branch:
-        return HttpResponseForbidden("Moderator uchun branch belgilanmagan.")
-    return resource_list(
-        request, Jurnal, JurnalForm, 'kategoriya/moderator/m_ilmiy Jurnallar.html',
-        search_fields=['title', 'author', 'institution_name'], user=request.user, moderator_filter=True
+        return HttpResponseForbidden("Moderator uchun filial belgilanmagan.")
+
+    # Sessiyadan muvaffaqiyat xabarini olish va o‘chirish
+    success_message = request.session.pop('success_message', None) if request.method == 'GET' else None
+
+    # Kesh kalitini yaratish
+    cache_key = f"m_jurnal_list_{request.user.id}_{request.GET.get('page', 1)}_{request.GET.get('search', '')}"
+    cached_response = cache.get(cache_key)
+
+    # Agar keshda ma’lumot bo‘lsa, uni qaytarish
+    if cached_response:
+        # Agar keshlangan javobda context_data mavjud bo‘lsa va success_message qo‘shilsa
+        if hasattr(cached_response, 'context_data'):
+            context = cached_response.context_data
+            if success_message:
+                context['success_message'] = success_message
+            return render(request, 'kategoriya/moderator/m_ilmiy Jurnallar.html', context)
+        return cached_response  # Agar context_data yo‘q bo‘lsa, to‘g‘ridan-to‘g‘ri qaytariladi
+
+    # resource_list dan natijani olish
+    response = resource_list(
+        request,
+        Jurnal,
+        JurnalForm,
+        'kategoriya/moderator/m_ilmiy Jurnallar.html',
+        limit_default=10,
+        search_fields=['title', 'author', 'institution_name'],
+        user=request.user,
+        moderator_filter=True  # Moderator uchun filial bo‘yicha filtr
     )
+
+    # Agar success_message bo‘lsa, uni context_data ga qo‘shib qayta render qilamiz
+    if success_message and hasattr(response, 'context_data'):
+        response.context_data['success_message'] = success_message
+        cache.set(cache_key, response, timeout=300)  # Yangilangan javobni keshga saqlash
+        return render(request, 'kategoriya/moderator/m_ilmiy Jurnallar.html', response.context_data)
+
+    # Keshga saqlash (faqat response.context_data mavjud bo‘lsa)
+    if hasattr(response, 'context_data'):
+        cache.set(cache_key, response, timeout=300)
+
+    return response
 
 
 @role_required('moderator', 'administrator', 'user1', 'user2', 'user3')
 @csrf_exempt
 def u1_jurnal_list(request):
-    return resource_list(
-        request, Jurnal, JurnalForm, 'kategoriya/users/Jurnallar/u1_jurnallar.html',
-        limit_default=8, search_fields=['title', 'author', 'institution_name'], user=request.user, moderator_filter=True
+    # Kesh kaliti
+    cache_key = f"u1_jurnal_list_{request.user.id}_{request.GET.get('page', 1)}_{request.GET.get('search', '')}"
+    cached_data = cache.get(cache_key)
+    if cached_data:
+        return cached_data
+
+    # Queryset tayyorlash
+    queryset = Jurnal.objects.all()
+    if request.user.role == 'moderator' and request.user.branch:
+        queryset = queryset.filter(branch=request.user.branch)
+
+    # Pagination va filtr
+    pagination_data = paginate_and_filter(
+        request,
+        queryset,
+        limit_default=8,  # Har sahifada 8 ta element
+        search_fields=['title', 'author', 'institution_name']
     )
+    form = JurnalForm(user=request.user)
+
+    # POST so'rovni qayta ishlash
+    if request.method == "POST":
+        form = JurnalForm(request.POST, request.FILES, user=request.user)
+        if form.is_valid():
+            instance = form.save(commit=False)
+            instance.user = request.user
+            instance.save()
+            request.session['success'] = "Jurnal muvaffaqiyatli qo‘shildi!"
+            return redirect(request.path_info)
+
+    # Kontekst tayyorlash
+    context = {
+        "jurnallar": pagination_data["items"],
+        "branches": Branch.objects.filter(
+            id=request.user.branch.id) if request.user.role == 'moderator' and request.user.branch else Branch.objects.all(),
+        "success_message": request.session.pop('success', None),
+        "form": form,
+        "total_pages": pagination_data["total_pages"],
+        "search_query": pagination_data["search_query"],
+        "paginator": pagination_data["paginator"],
+    }
+    response = render(request, 'kategoriya/users/Jurnallar/u1_jurnallar.html', context)
+
+    # Keshga saqlash
+    cache.set(cache_key, response, timeout=300)
+    return response
 
 
 def u1_jurnal_detail(request, jurnal_id):
@@ -2513,30 +3062,143 @@ def m_jurnal_delete(request, jurnal_id):
 # Maqola
 @csrf_exempt
 def maqola_list(request):
-    return resource_list(
-        request, Maqola, MaqolaForm, 'kategoriya/admin/Ilmiy Maqola.html',
-        search_fields=['title', 'author', 'institution_name']
+    # Success message handling via session
+    success_message = request.session.pop('success_message', None) if request.method == 'GET' else None
+
+    # Optimized queryset (add select_related if Maqola has foreign keys)
+    queryset = Maqola.objects.all()  # Add select_related if there are relationships
+
+    # Resource list with pagination and filtering
+    response = resource_list(
+        request,
+        Maqola,
+        MaqolaForm,
+        'kategoriya/admin/Ilmiy Maqola.html',
+        limit_default=8,  # 8 items per page
+        search_fields=['title', 'author', 'institution_name'],
+        user=request.user
     )
 
+    # Cache implementation
+    cache_key = f"maqola_list_{request.user.id}_{request.GET.get('page', 1)}_{request.GET.get('search', '')}"
+    cached_response = cache.get(cache_key)
+    if cached_response:
+        if success_message:
+            return render(request, 'kategoriya/admin/Ilmiy Maqola.html', {
+                'maqolalar': response.context_data['maqolalar'],  # Adjust context key based on your template
+                'success_message': success_message,
+                'search_query': request.GET.get('search', '')
+            })
+        return cached_response
 
-@role_required('moderator', 'administrator')
-@csrf_exempt
+    # Cache the response for 5 minutes
+    # cache.set(cache_key, response, timeout=300)
+
+    # Add success message to response if it exists
+    if success_message:
+        response.context_data['success_message'] = success_message
+
+    return response
+
+
+@role_required('moderator', 'administrator')  # Moderator va administratorlar kira oladi
+@csrf_exempt  # CSRF tekshiruvini o‘chiradi
 def m_maqola_list(request):
+    # Moderator uchun filial borligini tekshirish (administrator uchun shart emas)
     if request.user.role == 'moderator' and not request.user.branch:
-        return HttpResponseForbidden("Moderator uchun branch belgilanmagan.")
-    return resource_list(
-        request, Maqola, MaqolaForm, 'kategoriya/moderator/m_Ilmiy Maqola.html',
-        search_fields=['title', 'author', 'institution_name'], user=request.user, moderator_filter=True
+        return HttpResponseForbidden("Moderator uchun filial belgilanmagan.")
+
+    # Sessiyadan muvaffaqiyat xabarini olish va o‘chirish
+    success_message = request.session.pop('success_message', None) if request.method == 'GET' else None
+
+    # Kesh kalitini yaratish
+    cache_key = f"m_maqola_list_{request.user.id}_{request.GET.get('page', 1)}_{request.GET.get('search', '')}"
+    cached_response = cache.get(cache_key)
+
+    # Agar keshda ma’lumot bo‘lsa, uni qaytarish
+    if cached_response:
+        # Agar keshlangan javobda context_data mavjud bo‘lsa va success_message qo‘shilsa
+        if hasattr(cached_response, 'context_data'):
+            context = cached_response.context_data
+            if success_message:
+                context['success_message'] = success_message
+            return render(request, 'kategoriya/moderator/m_Ilmiy Maqola.html', context)
+        return cached_response  # Agar context_data yo‘q bo‘lsa, to‘g‘ridan-to‘g‘ri qaytariladi
+
+    # resource_list dan natijani olish
+    response = resource_list(
+        request,
+        Maqola,
+        MaqolaForm,
+        'kategoriya/moderator/m_Ilmiy Maqola.html',
+        limit_default=10,
+        search_fields=['title', 'author', 'institution_name'],
+        user=request.user,
+        moderator_filter=True  # Moderator uchun filial bo‘yicha filtr
     )
+
+    # Agar success_message bo‘lsa, uni context_data ga qo‘shib qayta render qilamiz
+    if success_message and hasattr(response, 'context_data'):
+        response.context_data['success_message'] = success_message
+        cache.set(cache_key, response, timeout=300)  # Yangilangan javobni keshga saqlash
+        return render(request, 'kategoriya/moderator/m_Ilmiy Maqola.html', response.context_data)
+
+    # Keshga saqlash (faqat response.context_data mavjud bo‘lsa)
+    if hasattr(response, 'context_data'):
+        cache.set(cache_key, response, timeout=300)
+
+    return response
 
 
 @role_required('moderator', 'administrator', 'user1', 'user2', 'user3')
 @csrf_exempt
 def u1_maqola_list(request):
-    return resource_list(
-        request, Maqola, MaqolaForm, 'kategoriya/users/Maqolalar/u1_maqolalar.html',
-        limit_default=8, search_fields=['title', 'author', 'institution_name'], user=request.user, moderator_filter=True
+    # Kesh kaliti
+    cache_key = f"u1_maqola_list_{request.user.id}_{request.GET.get('page', 1)}_{request.GET.get('search', '')}"
+    cached_data = cache.get(cache_key)
+    if cached_data:
+        return cached_data
+
+    # Queryset tayyorlash
+    queryset = Maqola.objects.all()
+    if request.user.role == 'moderator' and request.user.branch:
+        queryset = queryset.filter(branch=request.user.branch)
+
+    # Pagination va filtr
+    pagination_data = paginate_and_filter(
+        request,
+        queryset,
+        limit_default=8,  # Har sahifada 8 ta element
+        search_fields=['title', 'author', 'institution_name']
     )
+    form = MaqolaForm(user=request.user)
+
+    # POST so'rovni qayta ishlash
+    if request.method == "POST":
+        form = MaqolaForm(request.POST, request.FILES, user=request.user)
+        if form.is_valid():
+            instance = form.save(commit=False)
+            instance.user = request.user
+            instance.save()
+            request.session['success'] = "Maqola muvaffaqiyatli qo‘shildi!"
+            return redirect(request.path_info)
+
+    # Kontekst tayyorlash
+    context = {
+        "maqolalar": pagination_data["items"],
+        "branches": Branch.objects.filter(
+            id=request.user.branch.id) if request.user.role == 'moderator' and request.user.branch else Branch.objects.all(),
+        "success_message": request.session.pop('success', None),
+        "form": form,
+        "total_pages": pagination_data["total_pages"],
+        "search_query": pagination_data["search_query"],
+        "paginator": pagination_data["paginator"],
+    }
+    response = render(request, 'kategoriya/users/Maqolalar/u1_maqolalar.html', context)
+
+    # Keshga saqlash
+    cache.set(cache_key, response, timeout=300)
+    return response
 
 
 def u1_maqola_detail(request, maqola_id):
@@ -2577,30 +3239,143 @@ def m_maqola_delete(request, maqola_id):
 # Other
 @csrf_exempt
 def other_list(request):
-    return resource_list(
-        request, Other, OtherForm, 'kategoriya/admin/Boshqalar.html',
-        search_fields=['title', 'author', 'institution_name']
+    # Success message handling via session
+    success_message = request.session.pop('success_message', None) if request.method == 'GET' else None
+
+    # Optimized queryset (add select_related if Other has foreign keys)
+    queryset = Other.objects.all()  # Add select_related if there are relationships
+
+    # Resource list with pagination and filtering
+    response = resource_list(
+        request,
+        Other,
+        OtherForm,
+        'kategoriya/admin/Boshqalar.html',
+        limit_default=8,  # 8 items per page
+        search_fields=['title', 'author', 'institution_name'],
+        user=request.user
     )
 
+    # Cache implementation
+    cache_key = f"other_list_{request.user.id}_{request.GET.get('page', 1)}_{request.GET.get('search', '')}"
+    cached_response = cache.get(cache_key)
+    if cached_response:
+        if success_message:
+            return render(request, 'kategoriya/admin/Boshqalar.html', {
+                'others': response.context_data['others'],  # Adjust context key based on your template
+                'success_message': success_message,
+                'search_query': request.GET.get('search', '')
+            })
+        return cached_response
 
-@role_required('moderator', 'administrator')
-@csrf_exempt
+    # Cache the response for 5 minutes
+    # cache.set(cache_key, response, timeout=300)
+
+    # Add success message to response if it exists
+    if success_message:
+        response.context_data['success_message'] = success_message
+
+    return response
+
+
+@role_required('moderator', 'administrator')  # Moderator va administratorlar kira oladi
+@csrf_exempt  # CSRF tekshiruvini o‘chiradi
 def m_other_list(request):
+    # Moderator uchun filial borligini tekshirish (administrator uchun shart emas)
     if request.user.role == 'moderator' and not request.user.branch:
-        return HttpResponseForbidden("Moderator uchun branch belgilanmagan.")
-    return resource_list(
-        request, Other, OtherForm, 'kategoriya/moderator/m_Boshqalar.html',
-        search_fields=['title', 'author', 'institution_name'], user=request.user, moderator_filter=True
+        return HttpResponseForbidden("Moderator uchun filial belgilanmagan.")
+
+    # Sessiyadan muvaffaqiyat xabarini olish va o‘chirish
+    success_message = request.session.pop('success_message', None) if request.method == 'GET' else None
+
+    # Kesh kalitini yaratish
+    cache_key = f"m_other_list_{request.user.id}_{request.GET.get('page', 1)}_{request.GET.get('search', '')}"
+    cached_response = cache.get(cache_key)
+
+    # Agar keshda ma’lumot bo‘lsa, uni qaytarish
+    if cached_response:
+        # Agar keshlangan javobda context_data mavjud bo‘lsa va success_message qo‘shilsa
+        if hasattr(cached_response, 'context_data'):
+            context = cached_response.context_data
+            if success_message:
+                context['success_message'] = success_message
+            return render(request, 'kategoriya/moderator/m_Boshqalar.html', context)
+        return cached_response  # Agar context_data yo‘q bo‘lsa, to‘g‘ridan-to‘g‘ri qaytariladi
+
+    # resource_list dan natijani olish
+    response = resource_list(
+        request,
+        Other,
+        OtherForm,
+        'kategoriya/moderator/m_Boshqalar.html',
+        limit_default=10,
+        search_fields=['title', 'author', 'institution_name'],
+        user=request.user,
+        moderator_filter=True  # Moderator uchun filial bo‘yicha filtr
     )
+
+    # Agar success_message bo‘lsa, uni context_data ga qo‘shib qayta render qilamiz
+    if success_message and hasattr(response, 'context_data'):
+        response.context_data['success_message'] = success_message
+        cache.set(cache_key, response, timeout=300)  # Yangilangan javobni keshga saqlash
+        return render(request, 'kategoriya/moderator/m_Boshqalar.html', response.context_data)
+
+    # Keshga saqlash (faqat response.context_data mavjud bo‘lsa)
+    if hasattr(response, 'context_data'):
+        cache.set(cache_key, response, timeout=300)
+
+    return response
 
 
 @role_required('moderator', 'administrator', 'user1', 'user2', 'user3')
 @csrf_exempt
 def u1_other_list(request):
-    return resource_list(
-        request, Other, OtherForm, 'kategoriya/users/Boshqalar/u1_otherlar.html',
-        limit_default=8, search_fields=['title', 'author', 'institution_name'], user=request.user, moderator_filter=True
+    # Kesh kaliti
+    cache_key = f"u1_other_list_{request.user.id}_{request.GET.get('page', 1)}_{request.GET.get('search', '')}"
+    cached_data = cache.get(cache_key)
+    if cached_data:
+        return cached_data
+
+    # Queryset tayyorlash
+    queryset = Other.objects.all()
+    if request.user.role == 'moderator' and request.user.branch:
+        queryset = queryset.filter(branch=request.user.branch)
+
+    # Pagination va filtr
+    pagination_data = paginate_and_filter(
+        request,
+        queryset,
+        limit_default=8,  # Har sahifada 8 ta element
+        search_fields=['title', 'author', 'institution_name']
     )
+    form = OtherForm(user=request.user)
+
+    # POST so'rovni qayta ishlash
+    if request.method == "POST":
+        form = OtherForm(request.POST, request.FILES, user=request.user)
+        if form.is_valid():
+            instance = form.save(commit=False)
+            instance.user = request.user
+            instance.save()
+            request.session['success'] = "Boshqa resurs muvaffaqiyatli qo‘shildi!"
+            return redirect(request.path_info)
+
+    # Kontekst tayyorlash
+    context = {
+        "otherlar": pagination_data["items"],
+        "branches": Branch.objects.filter(
+            id=request.user.branch.id) if request.user.role == 'moderator' and request.user.branch else Branch.objects.all(),
+        "success_message": request.session.pop('success', None),
+        "form": form,
+        "total_pages": pagination_data["total_pages"],
+        "search_query": pagination_data["search_query"],
+        "paginator": pagination_data["paginator"],
+    }
+    response = render(request, 'kategoriya/users/Boshqalar/u1_otherlar.html', context)
+
+    # Keshga saqlash
+    cache.set(cache_key, response, timeout=300)
+    return response
 
 
 def u1_other_detail(request, other_id):
@@ -2641,49 +3416,179 @@ def m_other_delete(request, other_id):
 # Xorijiy Tajriba
 @csrf_exempt
 def tajriba_list(request):
-    pagination_data = paginate_and_filter(
-        request, Xorijiy_Tajriba.objects.all().order_by('-Military_organization'),
-        search_fields=['title', 'author', 'Military_organization']
-    )
-    return render(request, 'kategoriya/admin/Xorijiy tajribalar.html', {
-        'tajribalar': pagination_data["items"],
-        'branches': Branch.objects.all(),
-        'success_message': request.session.pop('success', None),
-        'form': XorijiyTajribaForm(),
-        'total_pages': pagination_data["total_pages"],
-        'search_query': pagination_data["search_query"],
-    })
+    """
+    Xorijiy tajribalar ro'yxatini ko'rsatish uchun view.
+    20 million ma'lumot bilan ishlash uchun optimallashtirilgan (Redis-siz).
+    """
+    # Muvaffaqiyat xabarini olish
+    success_message = request.session.pop('success_message', None) if request.method == 'GET' else None
 
+    # So'rov parametrlarini olish
+    search_query = request.GET.get('search', '').strip()
+    page_number = request.GET.get('page', 1)
+    limit = int(request.GET.get('limit', 50))  # Har sahifadagi elementlar soni
 
-@role_required('moderator', 'administrator')
-@csrf_exempt
-def m_tajriba_list(request):
-    if request.user.role == 'moderator' and not request.user.branch:
-        return HttpResponseForbidden("Moderator uchun branch belgilanmagan.")
-    queryset = Xorijiy_Tajriba.objects.filter(
-        branch=request.user.branch) if request.user.role == 'moderator' else Xorijiy_Tajriba.objects.all()
-    pagination_data = paginate_and_filter(
-        request, queryset.order_by('-Military_organization'),
-        search_fields=['title', 'author', 'Military_organization']
-    )
-    return render(request, 'kategoriya/moderator/m_Xorijiy tajribalar.html', {
-        'tajribalar': pagination_data["items"],
-        'branches': Branch.objects.filter(
-            id=request.user.branch.id) if request.user.role == 'moderator' and request.user.branch else Branch.objects.all(),
-        'success_message': request.session.pop('success', None),
+    # Kesh kalitini yaratish
+    cache_key = f"tajriba_list_{request.user.id}_{page_number}_{search_query}_{limit}"
+
+    # Django keshidan javobni tekshirish
+    cached_response = cache.get(cache_key)
+    if cached_response and not success_message:
+        return cached_response  # Keshdan qaytarish
+
+    # Ma'lumotlar bazasidan faqat kerakli maydonlarni olish
+    queryset = Xorijiy_Tajriba.objects.only(
+        'degree', 'title', 'author', 'country', 'military_organization', 'created_at'
+    ).order_by('-military_organization')
+
+    # Qidiruv so'zi bo'lsa, filtr qo'llash
+    if search_query:
+        queryset = queryset.filter(
+            Q(title__icontains=search_query) |
+            Q(author__icontains=search_query) |
+            Q(military_organization__icontains=search_query)
+        )
+
+    # Sahifalashni sozlash
+    paginator = Paginator(queryset, limit)
+    try:
+        tajribalar = paginator.page(page_number)
+    except Exception:
+        tajribalar = paginator.page(1)
+
+    # Kontekstni tayyorlash
+    context = {
+        'tajribalar': tajribalar,
+        'success_message': success_message,
         'form': XorijiyTajribaForm(user=request.user),
-        'total_pages': pagination_data["total_pages"],
-        'search_query': pagination_data["search_query"],
-    })
+        'total_pages': paginator.num_pages,
+        'search_query': search_query,
+        'limit': limit,
+    }
+
+    # Sahifani render qilish va keshga saqlash
+    response = render(request, 'kategoriya/admin/Xorijiy tajribalar.html', context)
+    cache.set(cache_key, response, timeout=600)  # 10 daqiqa keshlash
+
+    return response
+
+
+@role_required('moderator', 'administrator')  # Faqat moderator va administratorlar uchun
+@csrf_exempt  # CSRF tekshiruvini o‘chirish
+def m_tajriba_list(request):
+    # Moderator uchun filial tekshiruvi
+    if request.user.role == 'moderator' and not request.user.branch:
+        return HttpResponseForbidden("Moderator uchun filial belgilanmagan.")
+
+    # Sessiyadan muvaffaqiyat xabarini olish
+    success_message = request.session.pop('success_message', None) if request.method == 'GET' else None
+
+    # Kesh kaliti: foydalanuvchi ID, sahifa va qidiruv so'zi
+    cache_key = f"m_tajriba_list_{request.user.id}_{request.GET.get('page', 1)}_{request.GET.get('search', '')}"
+    cached_response = cache.get(cache_key)
+
+    # Keshdan ma'lumotni qaytarish
+    if cached_response and not success_message:  # Yangi xabar bo'lmasa
+        if isinstance(cached_response, dict):
+            context = cached_response
+            context['success_message'] = success_message
+            return render(request, 'kategoriya/moderator/m_Xorijiy tajribalar.html', context)
+        return cached_response
+
+    # Queryset: katta fayllarni yuklamaslik uchun defer ishlatamiz
+    if request.user.role == 'moderator':
+        queryset = Xorijiy_Tajriba.objects.filter(branch=request.user.branch).defer('file', 'image')
+    else:  # Administrator uchun
+        queryset = Xorijiy_Tajriba.objects.all().defer('file', 'image')
+
+    # Qidiruv optimallashtirish
+    search_query = request.GET.get('search', '').strip()
+    if search_query:
+        queryset = queryset.filter(
+            Q(title__icontains=search_query) |
+            Q(author__icontains=search_query) |
+            Q(military_organization__icontains=search_query)
+        )
+
+    # Sahifalash
+    limit = int(request.GET.get('limit', 10))  # Har sahifada 10 ta element
+    paginator = Paginator(queryset.order_by('-military_organization'), limit)
+    page_number = request.GET.get('page', 1)
+    tajribalar = paginator.get_page(page_number)
+
+
+
+    # Context tayyorlash
+    context = {
+        'tajribalar': tajribalar,
+        'success_message': success_message,
+        'form': XorijiyTajribaForm(user=request.user),
+        'total_pages': paginator.num_pages,
+        'search_query': search_query,
+    }
+
+    # Keshga saqlash (5 daqiqa)
+    cache.set(cache_key, context, timeout=300)
+
+    return render(request, 'kategoriya/moderator/m_Xorijiy tajribalar.html', context)
 
 
 @role_required('moderator', 'administrator', 'user1', 'user2', 'user3')
 @csrf_exempt
 def u1_tajriba_list(request):
-    return resource_list(
-        request, Xorijiy_Tajriba, XorijiyTajribaForm, 'kategoriya/users/Xorijiy_Tajribalar/u1_tajribalar.html',
-        limit_default=8, search_fields=['title', 'author', 'institution_name'], user=request.user, moderator_filter=True
-    )
+    # Kesh kaliti
+    cache_key = f"u1_tajriba_list_{request.user.id}_{request.GET.get('page', 1)}_{request.GET.get('search', '')}"
+    cached_data = cache.get(cache_key)
+    if cached_data and not request.session.get('success'):
+        return cached_data
+
+    # Queryset: katta fayllarni yuklamaslik uchun defer ishlatamiz
+    queryset = Xorijiy_Tajriba.objects.all().defer('file', 'image')
+
+    # Qidiruv optimallashtirish
+    search_query = request.GET.get('search', '').strip()
+    if search_query:
+        queryset = queryset.filter(
+            Q(title__icontains=search_query) |
+            Q(author__icontains=search_query) |
+            Q(country__icontains=search_query)
+        )
+
+    # Sahifalash: Military_organization bo'yicha tartiblash
+    limit = int(request.GET.get('limit', 8))  # Har sahifada 8 ta element
+    paginator = Paginator(queryset.order_by('-military_organization'), limit)  # To'g'ri nom ishlatildi
+    page_number = request.GET.get('page', 1)
+    tajribalar = paginator.get_page(page_number)
+
+    # Forma tayyorlash
+    form = XorijiyTajribaForm(user=request.user)
+
+    # POST so'rovni qayta ishlash
+    if request.method == "POST":
+        form = XorijiyTajribaForm(request.POST, request.FILES, user=request.user)
+        if form.is_valid():
+            instance = form.save(commit=False)
+            instance.user = request.user
+            instance.save()
+            request.session['success'] = "Xorijiy tajriba muvaffaqiyatli qo‘shildi!"
+            return redirect(request.path_info)
+
+    # Kontekst tayyorlash
+    context = {
+        "tajribalar": tajribalar,
+        "success_message": request.session.pop('success', None),
+        "form": form,
+        "total_pages": paginator.num_pages,
+        "search_query": search_query,
+        "paginator": paginator,
+    }
+
+    # Shablonni render qilish
+    response = render(request, 'kategoriya/users/Xorijiy_Tajribalar/u1_tajribalar.html', context)
+
+    # Keshga saqlash
+    cache.set(cache_key, response, timeout=300)
+    return response
 
 
 def u1_tajriba_detail(request, tajriba_id):
@@ -2695,7 +3600,13 @@ def u1_tajriba_detail(request, tajriba_id):
 
 @csrf_exempt
 def tajriba_create(request):
-    return handle_create(request, XorijiyTajribaForm, 'tajriba_list', 'tajriba')
+    if request.method == "POST":
+        form = XorijiyTajribaForm(request.POST, request.FILES)
+        if form.is_valid():
+            instance = form.save()
+            request.session['success'] = "Xorijiy tajriba muvaffaqiyatli qo‘shildi!"
+            return redirect('tajriba_list')
+    return redirect('tajriba_list')
 
 
 @csrf_exempt
@@ -2705,7 +3616,19 @@ def m_tajriba_create(request):
 
 @csrf_exempt
 def tajriba_edit(request, tajriba_id):
-    return handle_edit(request, Xorijiy_Tajriba, tajriba_id, XorijiyTajribaForm, 'tajriba_list')
+    instance = get_object_or_404(Xorijiy_Tajriba, id=tajriba_id)
+    if request.method == "POST":
+        form = XorijiyTajribaForm(request.POST, request.FILES, instance=instance)
+        if form.is_valid():
+            updated_instance = form.save(commit=False)
+            if not request.FILES.get('file'):
+                updated_instance.file = instance.file
+            if not request.FILES.get('image'):
+                updated_instance.image = instance.image
+            updated_instance.save()
+            request.session['success'] = "Xorijiy tajriba muvaffaqiyatli yangilandi!"
+            return redirect('tajriba_list')
+    return redirect('tajriba_list')
 
 
 @csrf_exempt
@@ -2713,8 +3636,13 @@ def m_tajriba_edit(request, tajriba_id):
     return handle_edit(request, Xorijiy_Tajriba, tajriba_id, XorijiyTajribaForm, 'm_tajriba_list', user=request.user)
 
 
+@require_POST
+@csrf_exempt
 def tajriba_delete(request, tajriba_id):
-    return handle_delete(request, Xorijiy_Tajriba, tajriba_id, 'tajriba_list')
+    instance = get_object_or_404(Xorijiy_Tajriba, id=tajriba_id)
+    instance.delete()
+    request.session['success'] = "Xorijiy tajriba muvaffaqiyatli o‘chirildi!"
+    return redirect('tajriba_list')
 
 
 def m_tajriba_delete(request, tajriba_id):

@@ -245,7 +245,7 @@ class XorijiyTajribaForm(forms.ModelForm):
     class Meta:
         model = Xorijiy_Tajriba
         fields = [
-            'degree', 'title', 'author', 'country', 'Military_organization', 'material', 'made_in', 'anotation', 'keys',
+            'degree', 'title', 'author', 'country', 'military_organization', 'material', 'made_in', 'anotation', 'keys',
             'file', 'image',
         ]
         widgets = {
@@ -254,15 +254,12 @@ class XorijiyTajribaForm(forms.ModelForm):
 
     def clean_file(self):
         file = self.cleaned_data.get('file')
-        if file and file.size > 10 * 1024 * 1024:  # Limit to 10 MB
+        if file and file.size > 10 * 1024 * 1024:  # 10 MB limit
             raise forms.ValidationError("Fayl hajmi 10MB dan oshmasligi kerak.")
         return file
 
     def __init__(self, *args, **kwargs):
-        user = kwargs.pop('user', None)  # user parametrini xavfsiz olamiz
+        user = kwargs.pop('user', None)
         super(XorijiyTajribaForm, self).__init__(*args, **kwargs)
         for field in self.fields:
             self.fields[field].required = False
-        # Agar user moderator bo‘lsa, Military_organization ni cheklash
-        if user and user.role == 'moderator' and user.branch:
-            self.fields['Military_organization'].queryset = Xorijiy_Tajriba.objects.filter(branch=user.branch)

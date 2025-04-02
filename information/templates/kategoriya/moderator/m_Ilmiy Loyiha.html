@@ -371,25 +371,66 @@
                     </div>
                     <!-- Sahifalash -->
                     <div class="d-flex justify-content-center">
-                        <nav aria-label="Page navigation example">
+                        <nav aria-label="Sahifa navigatsiyasi">
                             <ul class="pagination justify-content-center">
+                                <!-- Oldingi tugma -->
                                 <li class="page-item {% if not loyihalar.has_previous %}disabled{% endif %}">
                                     <a class="page-link"
-                                       href="{% if loyihalar.has_previous %}?page={{ loyihalar.previous_page_number }}&limit={{ request.GET.limit }}&search=
-                                           {{ request.GET.search|urlencode }}{% else %}#{% endif %}">
+                                       href="{% if loyihalar.has_previous %}?page={{ loyihalar.previous_page_number }}&limit=
+
+                                           {{ request.GET.limit|default:10 }}{% if search_query %}&search={{ search_query|urlencode }}{% endif %}{% else %}#{% endif %}">
                                         <i class="fas fa-chevron-left"></i>
                                     </a>
                                 </li>
-                                {% for num in loyihalar.paginator.page_range %}
-                                    <li class="page-item {% if loyihalar.number == num %}active{% endif %}">
-                                        <a class="page-link text-primary font-weight-bold"
-                                           href="?page={{ num }}&limit={{ request.GET.limit }}&search={{ request.GET.search|urlencode }}">{{ num }}</a>
-                                    </li>
-                                {% endfor %}
+
+                                <!-- 3 ta sahifa raqamini ko‘rsatish -->
+                                {% with start_page=loyihalar.number|add:-1 end_page=loyihalar.number|add:1 %}
+                                    {% if start_page < 1 %}
+                                        {% with start_page=1 end_page=3 %}
+                                            {% for num in loyihalar.paginator.page_range %}
+                                                {% if num >= start_page and num <= end_page %}
+                                                    <li class="page-item {% if loyihalar.number == num %}active{% endif %}">
+                                                        <a class="page-link text-primary font-weight-bold"
+                                                           href="?page={{ num }}&limit=
+
+                                                                   {{ request.GET.limit|default:10 }}{% if search_query %}&search={{ search_query|urlencode }}{% endif %}">{{ num }}</a>
+                                                    </li>
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endwith %}
+                                    {% elif end_page > loyihalar.paginator.num_pages %}
+                                        {% with start_page=loyihalar.paginator.num_pages|add:-2 end_page=loyihalar.paginator.num_pages %}
+                                            {% for num in loyihalar.paginator.page_range %}
+                                                {% if num >= start_page and num <= end_page %}
+                                                    <li class="page-item {% if loyihalar.number == num %}active{% endif %}">
+                                                        <a class="page-link text-primary font-weight-bold"
+                                                           href="?page={{ num }}&limit=
+
+                                                                   {{ request.GET.limit|default:10 }}{% if search_query %}&search={{ search_query|urlencode }}{% endif %}">{{ num }}</a>
+                                                    </li>
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endwith %}
+                                    {% else %}
+                                        {% for num in loyihalar.paginator.page_range %}
+                                            {% if num >= start_page and num <= end_page %}
+                                                <li class="page-item {% if loyihalar.number == num %}active{% endif %}">
+                                                    <a class="page-link text-primary font-weight-bold"
+                                                       href="?page={{ num }}&limit=
+
+                                                               {{ request.GET.limit|default:10 }}{% if search_query %}&search={{ search_query|urlencode }}{% endif %}">{{ num }}</a>
+                                                </li>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endif %}
+                                {% endwith %}
+
+                                <!-- Keyingi tugma -->
                                 <li class="page-item {% if not loyihalar.has_next %}disabled{% endif %}">
                                     <a class="page-link"
-                                       href="{% if loyihalar.has_next %}?page={{ loyihalar.next_page_number }}&limit={{ request.GET.limit }}&search=
-                                           {{ request.GET.search|urlencode }}{% else %}#{% endif %}">
+                                       href="{% if loyihalar.has_next %}?page={{ loyihalar.next_page_number }}&limit=
+
+                                           {{ request.GET.limit|default:10 }}{% if search_query %}&search={{ search_query|urlencode }}{% endif %}{% else %}#{% endif %}">
                                         <i class="fas fa-chevron-right"></i>
                                     </a>
                                 </li>
