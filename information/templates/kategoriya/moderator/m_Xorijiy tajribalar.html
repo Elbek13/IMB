@@ -186,16 +186,6 @@
                                                                        value="{{ tajriba.material }}">
                                                             </div>
 
-                                                            <div class="col-md-6">
-                                                                <label for="made_in{{ tajriba.id }}"
-                                                                       class="form-label fw-bold">Ishlab Chiqarilgan
-                                                                    Yili</label>
-                                                                <input type="number" class="form-control"
-                                                                       autocomplete="off"
-                                                                       id="made_in{{ tajriba.id }}" name="made_in"
-                                                                       value="{{ tajriba.made_in }}">
-                                                            </div>
-
                                                             <div class="col-md-12">
                                                                 <label for="anotation{{ tajriba.id }}"
                                                                        class="form-label fw-bold">Anotatsiya</label>
@@ -242,15 +232,6 @@
                                                                 {% endif %}
                                                             </div>
 
-                                                            <div class="col-md-6">
-                                                                <label for="slug{{ tajriba.id }}"
-                                                                       class="form-label fw-bold">Qo'shimcha
-                                                                    maydon</label>
-                                                                <input type="text" class="form-control"
-                                                                       autocomplete="off"
-                                                                       id="slug{{ tajriba.id }}" name="slug"
-                                                                       value="{{ tajriba.slug }}">
-                                                            </div>
                                                             <div class="col-md-6">
                                                                 <label for="image{{ tajriba.id }}"
                                                                        class="form-label fw-bold">Rasm</label>
@@ -305,6 +286,45 @@
                                         </div>
                                     </div>
 
+                                    <!-- View Modal -->
+                                    <div class="modal fade" id="tajribaModal{{ tajriba.id }}" tabindex="-1"
+                                         aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered modal-lg">
+                                            <div class="modal-content"
+                                                 style="border-radius: 15px !important; box-shadow: 0 4px 20px rgba(0,0,0,0.1) !important;">
+                                                <div class="modal-header bg-primary text-white"
+                                                     style="border-radius: 15px 15px 0 0 !important;">
+                                                    <h5 class="modal-title">{{ tajriba.title }}</h5>
+                                                    <button type="button" class="btn-close btn-close-white"
+                                                            data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p><strong>Muallif:</strong> {{ tajriba.author }}</p>
+                                                    <p><strong>Davlat:</strong> {{ tajriba.country }}</p>
+                                                    <p><strong>Harbiy
+                                                        Tashkilot:</strong> {{ tajriba.military_organization }}</p>
+                                                    <p>
+                                                        <strong>Daraja:</strong> {{ tajriba.get_degree_display|default:"--" }}
+                                                    </p>
+                                                    <p><strong>Material:</strong> {{ tajriba.material }}</p>
+                                                    <p><strong>Ishlab Chiqarilgan
+                                                        Tashkilot:</strong> {{ tajriba.made_in }}</p>
+                                                    <p><strong>Anotatsiya:</strong> {{ tajriba.anotation }}</p>
+                                                    <p><strong>Kalit So‘zlar:</strong> {{ tajriba.keys }}</p>
+                                                    {% if tajriba.file %}
+                                                        <p><strong>Fayl:</strong> <a href="{{ tajriba.file.url }}"
+                                                                                     target="_blank">Yuklab olish</a>
+                                                        </p>
+                                                    {% endif %}
+                                                    {% if tajriba.image %}
+                                                        <p><strong>Rasm:</strong> <img src="{{ tajriba.image.url }}"
+                                                                                       alt="Rasm" class="img-fluid"
+                                                                                       style="max-width: 300px;"></p>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
 
                                 {% empty %}
                                     <tr>
@@ -326,6 +346,8 @@
                                     <a class="page-link"
                                        href="{% if tajribalar.has_previous %}?page={{ tajribalar.previous_page_number }}&limit=
 
+
+
                                            {{ request.GET.limit|default:10 }}{% if search_query %}&search={{ search_query|urlencode }}{% endif %}{% else %}#{% endif %}">
                                         <i class="fas fa-chevron-left"></i>
                                     </a>
@@ -341,6 +363,8 @@
                                                         <a class="page-link text-primary font-weight-bold"
                                                            href="?page={{ num }}&limit=
 
+
+
                                                                    {{ request.GET.limit|default:10 }}{% if search_query %}&search={{ search_query|urlencode }}{% endif %}">{{ num }}</a>
                                                     </li>
                                                 {% endif %}
@@ -354,6 +378,8 @@
                                                         <a class="page-link text-primary font-weight-bold"
                                                            href="?page={{ num }}&limit=
 
+
+
                                                                    {{ request.GET.limit|default:10 }}{% if search_query %}&search={{ search_query|urlencode }}{% endif %}">{{ num }}</a>
                                                     </li>
                                                 {% endif %}
@@ -366,6 +392,8 @@
                                                     <a class="page-link text-primary font-weight-bold"
                                                        href="?page={{ num }}&limit=
 
+
+
                                                                {{ request.GET.limit|default:10 }}{% if search_query %}&search={{ search_query|urlencode }}{% endif %}">{{ num }}</a>
                                                 </li>
                                             {% endif %}
@@ -377,6 +405,8 @@
                                 <li class="page-item {% if not tajribalar.has_next %}disabled{% endif %}">
                                     <a class="page-link"
                                        href="{% if tajribalar.has_next %}?page={{ tajribalar.next_page_number }}&limit=
+
+
 
                                            {{ request.GET.limit|default:10 }}{% if search_query %}&search={{ search_query|urlencode }}{% endif %}{% else %}#{% endif %}">
                                         <i class="fas fa-chevron-right"></i>
@@ -431,12 +461,6 @@
                                 <label for="{{ form.material.id_for_label }}"
                                        class="form-label fw-bold">Material</label>
                                 {{ form.material }}
-                            </div>
-
-                            <div class="col-md-6">
-                                <label for="{{ form.made_in.id_for_label }}" class="form-label fw-bold">Ishlab
-                                    Chiqarilgan Yili</label>
-                                {{ form.made_in }}
                             </div>
 
                             <div class="col-md-12">

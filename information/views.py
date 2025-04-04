@@ -3468,41 +3468,39 @@ def tajriba_list(request):
 
     # Sahifani render qilish va keshga saqlash
     response = render(request, 'kategoriya/admin/Xorijiy tajribalar.html', context)
-    cache.set(cache_key, response, timeout=600)  # 10 daqiqa keshlash
+    # cache.set(cache_key, response, timeout=600)  # 10 daqiqa keshlash
 
     return response
 
 
-@role_required('moderator', 'administrator')  # Faqat moderator va administratorlar uchun
-@csrf_exempt  # CSRF tekshiruvini o‘chirish
+@csrf_exempt
 def m_tajriba_list(request):
-    # Moderator uchun filial tekshiruvi
-    if request.user.role == 'moderator' and not request.user.branch:
-        return HttpResponseForbidden("Moderator uchun filial belgilanmagan.")
-
-    # Sessiyadan muvaffaqiyat xabarini olish
+    """
+    Xorijiy tajribalar ro'yxatini ko'rsatish uchun view.
+    20 million ma'lumot bilan ishlash uchun optimallashtirilgan (Redis-siz).
+    """
+    # Muvaffaqiyat xabarini olish
     success_message = request.session.pop('success_message', None) if request.method == 'GET' else None
 
-    # Kesh kaliti: foydalanuvchi ID, sahifa va qidiruv so'zi
-    cache_key = f"m_tajriba_list_{request.user.id}_{request.GET.get('page', 1)}_{request.GET.get('search', '')}"
-    cached_response = cache.get(cache_key)
-
-    # Keshdan ma'lumotni qaytarish
-    if cached_response and not success_message:  # Yangi xabar bo'lmasa
-        if isinstance(cached_response, dict):
-            context = cached_response
-            context['success_message'] = success_message
-            return render(request, 'kategoriya/moderator/m_Xorijiy tajribalar.html', context)
-        return cached_response
-
-    # Queryset: katta fayllarni yuklamaslik uchun defer ishlatamiz
-    if request.user.role == 'moderator':
-        queryset = Xorijiy_Tajriba.objects.filter(branch=request.user.branch).defer('file', 'image')
-    else:  # Administrator uchun
-        queryset = Xorijiy_Tajriba.objects.all().defer('file', 'image')
-
-    # Qidiruv optimallashtirish
+    # So'rov parametrlarini olish
     search_query = request.GET.get('search', '').strip()
+    page_number = request.GET.get('page', 1)
+    limit = int(request.GET.get('limit', 50))  # Har sahifadagi elementlar soni
+
+    # Kesh kalitini yaratish
+    cache_key = f"tajriba_list_{request.user.id}_{page_number}_{search_query}_{limit}"
+
+    # Django keshidan javobni tekshirish
+    cached_response = cache.get(cache_key)
+    if cached_response and not success_message:
+        return cached_response  # Keshdan qaytarish
+
+    # Ma'lumotlar bazasidan faqat kerakli maydonlarni olish
+    queryset = Xorijiy_Tajriba.objects.only(
+        'degree', 'title', 'author', 'country', 'military_organization', 'created_at'
+    ).order_by('-military_organization')
+
+    # Qidiruv so'zi bo'lsa, filtr qo'llash
     if search_query:
         queryset = queryset.filter(
             Q(title__icontains=search_query) |
@@ -3510,28 +3508,28 @@ def m_tajriba_list(request):
             Q(military_organization__icontains=search_query)
         )
 
-    # Sahifalash
-    limit = int(request.GET.get('limit', 10))  # Har sahifada 10 ta element
-    paginator = Paginator(queryset.order_by('-military_organization'), limit)
-    page_number = request.GET.get('page', 1)
-    tajribalar = paginator.get_page(page_number)
+    # Sahifalashni sozlash
+    paginator = Paginator(queryset, limit)
+    try:
+        tajribalar = paginator.page(page_number)
+    except Exception:
+        tajribalar = paginator.page(1)
 
-
-
-    # Context tayyorlash
+    # Kontekstni tayyorlash
     context = {
         'tajribalar': tajribalar,
         'success_message': success_message,
         'form': XorijiyTajribaForm(user=request.user),
         'total_pages': paginator.num_pages,
         'search_query': search_query,
+        'limit': limit,
     }
 
-    # Keshga saqlash (5 daqiqa)
-    cache.set(cache_key, context, timeout=300)
+    # Sahifani render qilish va keshga saqlash
+    response = render(request, 'kategoriya/moderator/m_Xorijiy tajribalar.html', context)
+    # cache.set(cache_key, response, timeout=600)  # 10 daqiqa keshlash
 
-    return render(request, 'kategoriya/moderator/m_Xorijiy tajribalar.html', context)
-
+    return response
 
 @role_required('moderator', 'administrator', 'user1', 'user2', 'user3')
 @csrf_exempt
